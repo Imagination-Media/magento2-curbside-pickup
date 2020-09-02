@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <!-- Save the curbside info when customer is placing an order -->
+    <event name="sales_model_service_quote_submit_before">
+        <observer name="curbside_save_info" instance="ImaginationMedia\CurbsidePickup\Observer\Quote\PlaceOrder\SaveCurbsideInfo" />
+    </event>
+</config>

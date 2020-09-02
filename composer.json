@@ -1,0 +1,29 @@
+{
+    "name": "imaginationmedia/magento2-curbside-pickup",
+    "description": "This module extends the base pick up in-store Magento 2 functionality adding an option for a curbside pick up.",
+    "type": "magento2-module",
+    "require": {
+        "php": ">=7.3",
+        "magento/module-inventory-in-store-pickup": ">=1.0.0"
+    },
+    "license": [
+        "OSL-3.0"
+    ],
+    "authors": [
+        {
+            "name": "Igor Ludgero Miura",
+            "email": "igor@imaginationmedia.com",
+            "homepage": "http://www.imaginationmedia.com/",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "ImaginationMedia\\CurbsidePickup\\": ""
+        }
+    },
+    "version": "1.0.0"
+}

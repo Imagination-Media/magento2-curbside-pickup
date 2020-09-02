@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <!-- Columns on the quote table -->
+    <table name="quote" resource="default" engine="innodb">
+        <column xsi:type="boolean" name="curbside" nullable="false" default="false" comment="Curbside - Is a curbside order?" />
+        <column xsi:type="text" name="curbside_data" nullable="true" comment="Curbside - Additional data" />
+        <column xsi:type="datetime" name="curbside_delivery_time" nullable="true" comment="Curbside - Delivery time" />
+    </table>
+
+    <!-- Columns on the sales_order table -->
+    <table name="sales_order" resource="default" engine="innodb">
+        <column xsi:type="boolean" name="curbside" nullable="false" default="false" comment="Curbside - Is a curbside order?" />
+        <column xsi:type="text" name="curbside_data" nullable="true" comment="Curbside - Additional data" />
+        <column xsi:type="datetime" name="curbside_delivery_time" nullable="true" comment="Curbside - Delivery time" />
+    </table>
+</schema>
