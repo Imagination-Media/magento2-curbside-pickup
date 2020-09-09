@@ -40,6 +40,10 @@ class OrderStatus implements DataPatchInterface
     public const STATUS_CUSTOMER_READY       = "curbside_customer_ready";
     public const STATUS_CUSTOMER_READY_LABEL = "Customer is ready to pick-up";
 
+    public const FIELD_CURBSIDE               = "curbside";
+    public const FIELD_CURBSIDE_DATA          = "curbside_data";
+    public const FIELD_CURBSIDE_DELIVERY_TIME = "curbside_delivery_time";
+
     /**
      * @var StatusFactory
      */
