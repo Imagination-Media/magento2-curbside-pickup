@@ -3,7 +3,7 @@
     "description": "This module extends the base pick up in-store Magento 2 functionality adding an option for a curbside pick up.",
     "type": "magento2-module",
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "magento/module-inventory-in-store-pickup": ">=1.0.0"
     },
     "license": [
