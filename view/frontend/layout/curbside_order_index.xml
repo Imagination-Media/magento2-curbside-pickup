@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template" cacheable="false"
+                   name="curbside-order-list" template="ImaginationMedia_CurbsidePickup::sales/order/curbside/list.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\Sales\Order\Curbside</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Customer\Block\Account\Dashboard" name="customer.account.link.back" template="Magento_Customer::account/link/back.phtml" cacheable="false" />
+        </referenceContainer>
+    </body>
+</page>

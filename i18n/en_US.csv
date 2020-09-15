@@ -1,0 +1,14 @@
+"Curbside PickUp Orders","Curbside PickUp Orders"
+"Curbside PickUp Order - %s","Curbside PickUp Order - %s"
+"Invalid curbside pickup order.","Invalid curbside pickup order."
+Orders,Orders
+"Order ID","Order ID"
+Date,Date
+"Delivery Time","Delivery Time"
+Store,Store
+"Order Total","Order Total"
+Status,Status
+Action,Action
+"View Order","View Order"
+"You have placed no curbside pickup orders.","You have placed no curbside pickup orders."
+"Curbside Orders","Curbside Orders"

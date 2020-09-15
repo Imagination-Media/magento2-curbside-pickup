@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+declare(strict_types=1);
+
+use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
+use ImaginationMedia\CurbsidePickup\ViewModel\Sales\Order\Curbside;
+use Magento\Framework\View\Element\Template;
+use Magento\Sales\Model\Order;
+
+/**
+ * @var $block Template
+ * @var $viewModel Curbside
+ * @var $order Order
+ */
+
+$viewModel = $block->getViewModel();
+$orders = $viewModel->getCurbsideOrder();
+?>
+
+<?php if ($orders->count() > 0): ?>
+    <div class="table-wrapper orders-history">
+        <table class="data table table-order-items history" id="my-orders-table">
+            <caption class="table-caption"><?= __("Orders") ?></caption>
+            <thead>
+            <tr>
+                <th scope="col" class="col id"><?= __("Order ID") ?></th>
+                <th scope="col" class="col date"><?= __("Date") ?></th>
+                <th scope="col" class="col delivery_time"><?= __("Delivery Time") ?></th>
+                <th scope="col" class="col pickup_store"><?= __("Store") ?></th>
+                <th scope="col" class="col total"><?= __("Order Total") ?></th>
+                <th scope="col" class="col status"><?= __("Status") ?></th>
+                <th scope="col" class="col actions"><?= __("Action") ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td data-th="Order ID" class="col id">
+                        <?= $order->getIncrementId() ?>
+                    </td>
+                    <td data-th="Date" class="col date">
+                        <?= $block->formatDate($order->getCreatedAt()) ?>
+                    </td>
+                    <td data-th="Delivery Time" class="col delivery_time">
+                        <?= $block->formatDate($order->getData(OrderStatus::FIELD_CURBSIDE_DELIVERY_TIME)) ?>
+                    </td>
+                    <td data-th=Store" class="col store">
+                        <?php //TODO ?>
+                    </td>
+                    <td data-th="Order Total" class="col total">
+                        <span class="price"><?= $order->formatPrice($order->getGrandTotal()) ?></span>
+                    </td>
+                    <td data-th="Status" class="col status">
+                        <?= $order->getStatus() ?>
+                    </td>
+                    <td data-th="Actions" class="col actions">
+                        <a href="<?= $block->getUrl(
+                            "curbside/order/view",
+                            [
+                                "id" => $order->getId()
+                            ]
+                        ) ?>" class="action view">
+                            <span><?= __("View Order") ?></span>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php else: ?>
+    <div class="message info empty">
+        <span><?= __("You have placed no curbside pickup orders.") ?></span>
+    </div>
+<?php endif; ?>
+
