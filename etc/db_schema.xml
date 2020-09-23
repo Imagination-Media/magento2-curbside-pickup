@@ -28,4 +28,9 @@
         <column xsi:type="text" name="curbside_data" nullable="true" comment="Curbside - Additional data" />
         <column xsi:type="datetime" name="curbside_delivery_time" nullable="true" comment="Curbside - Delivery time" />
     </table>
+
+    <!-- Columns on the inventory_source table -->
+    <table name="inventory_source">
+        <column xsi:type="boolean" name="is_curbside_pickup_location_active" nullable="false" default="0"/>
+    </table>
 </schema>

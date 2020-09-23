@@ -1,0 +1,7 @@
+{
+    "inventory_source": {
+        "column": {
+            "is_curbside_pickup_location_active": true
+        }
+    }
+}

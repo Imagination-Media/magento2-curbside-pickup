@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Denis Colli Spalenza <denis@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="carriers">
+            <group id="instore">
+                <group id="curbside" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="0" translate="label">
+                    <label>Curbside PickUp</label>
+
+                    <field id="active" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="10">
+                        <label>Enabled</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/instore_curbside/active</config_path>
+                    </field>
+
+                    <field id="threshold" translate="label comment" type="text" showInDefault="1" showInWebsite="1" showInStore="20">
+                        <label>Threshold to allow the pickup</label>
+                        <config_path>carriers/instore_curbside/threshold</config_path>
+                        <comment>the minimum required time an order takes to be ready for pick up.</comment>
+                    </field>
+
+
+                </group>
+            </group>
+        </section>
+    </system>
+</config>
