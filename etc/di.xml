@@ -16,6 +16,8 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\InventoryApi\Api\Data\SourceExtension"
                 type="ImaginationMedia\CurbsidePickup\Rewrite\Magento\InventoryApi\Api\Data\SourceExtension"/>
+    <preference for="Magento\Quote\Api\Data\AddressExtension"
+                type="ImaginationMedia\CurbsidePickup\Rewrite\Magento\Quote\Api\Data\AddressExtension"/>
 
     <type name="Magento\InventoryInStorePickup\Model\Source\InitPickupLocationExtensionAttributes">
         <plugin disabled="false"
@@ -29,5 +31,13 @@
                 name="save_in_store_curbside_pickup_links"
                 sortOrder="100"
                 type="ImaginationMedia\CurbsidePickup\Plugin\Magento\InventoryApi\SourceRepository\SaveInStoreCurbsidePickupPlugin"/>
+    </type>
+
+    <type name="Magento\InventoryInStorePickupApi\Model\Mapper">
+        <arguments>
+            <argument name="map" xsi:type="array">
+                <item name="extension_attributes.is_curbside_pickup_location_active" xsi:type="string">extension_attributes.is_curbside_pickup_location_active</item>
+            </argument>
+        </arguments>
     </type>
 </config>

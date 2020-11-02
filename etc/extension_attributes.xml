@@ -17,4 +17,8 @@
     <extension_attributes for="Magento\InventoryApi\Api\Data\SourceInterface">
         <attribute code="is_curbside_pickup_location_active" type="boolean"/>
     </extension_attributes>
+
+    <extension_attributes for="Magento\InventoryInStorePickupApi\Api\Data\PickupLocationInterface">
+        <attribute code="is_curbside_pickup_location_active" type="boolean"/>
+    </extension_attributes>
 </config>

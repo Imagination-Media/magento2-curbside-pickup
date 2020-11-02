@@ -1,0 +1,52 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<tr class="row location">
+    <td class="col col-location-details location-details">
+        <p class="location-name">
+            <text args="location.name"/>
+        </p>
+        <p class="location-address">
+            <text args="location.street"/><br/>
+            <text args="location.city"/>, <span text="location.region"></span> <text args="location.postcode"/><br/>
+            <text args="location.country"/><br/>
+            <a if="location.telephone" attr="'href': 'tel:' + location.telephone" text="location.telephone"></a>
+        </p>
+        <p if="location.description" class="location-description" html="location.description"></p>
+    </td>
+    <td class="col col-location-actions">
+        <div class="select-location" ifnot="$parent.isPickupLocationSelected($data)">
+            <button type="button"
+                    class="action secondary action-select-shipping-item"
+                    click="$parent.selectPickupLocation.bind($parent, $data)">
+                <translate args="'Select to Pick Up here'"/>
+            </button>
+        </div>
+        <div class="location-selected" if="$parent.isPickupLocationSelected($data)">
+            <button type="button" class="action secondary" disabled>
+                <span translate="'Selected to Pick Up here'"/>
+            </button>
+        </div>
+
+        <br/>
+        <br/>
+
+        <div if="$parent.isCurbsidePickupLocation($data)">
+            <div class="select-curbside" if="$parent.isCurbsidePickupLocationUnSelected($data)">
+                <button type="button"
+                        class="action secondary action-select-curbside-option"
+                        click="$parent.selectCurbsidePickupLocation.bind($parent, $data)">
+                    <translate args="'Select as Curbside Pickup'"/>
+                </button>
+            </div>
+            <div class="curbside-selected" if="$parent.isCurbsidePickupLocationSelected($data)">
+                <button type="button" class="action secondary" disabled>
+                    <span translate="'Selected to Curbside Pickup'"/>
+                </button>
+            </div>
+        </div>
+    </td>
+</tr>
