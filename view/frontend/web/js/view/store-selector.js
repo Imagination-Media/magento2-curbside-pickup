@@ -17,12 +17,14 @@ define([
     'use strict';
 
     return function (storeSelectorObj) {
-        $.extend(storeSelectorObj.defaults,{
-            selectedLocationTemplate: 'ImaginationMedia_CurbsidePickup/store-selector/selected-location',
-            storeSelectorPopupItemTemplate: 'ImaginationMedia_CurbsidePickup/store-selector/popup-item'
-        });
 
-        $.extend(storeSelectorObj, {
+        return storeSelectorObj.extend({
+            defaults: {
+                selectedLocationTemplate: 'ImaginationMedia_CurbsidePickup/store-selector/selected-location',
+                storeSelectorPopupItemTemplate: 'ImaginationMedia_CurbsidePickup/store-selector/popup-item',
+                curbsideMode: pickupLocationsService.curbsideMode
+            },
+
             /**
              * @param {Object} location
              * @returns void
@@ -74,7 +76,5 @@ define([
                 return _.isEqual(this.selectedLocation(), location) && _.isEqual(pickupLocationsService.curbsideMode(), true);
             }
         });
-
-        return storeSelectorObj;
     };
 });

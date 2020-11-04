@@ -39,12 +39,12 @@
                 <button type="button"
                         class="action secondary action-select-curbside-option"
                         click="$parent.selectCurbsidePickupLocation.bind($parent, $data)">
-                    <translate args="'Select as Curbside Pickup'"/>
+                    <translate args="'Select to Pick Up here as Curbside'"/>
                 </button>
             </div>
             <div class="curbside-selected" if="$parent.isCurbsidePickupLocationSelected($data)">
                 <button type="button" class="action secondary" disabled>
-                    <span translate="'Selected to Curbside Pickup'"/>
+                    <span translate="'Selected to Pick Up here as Curbside'"/>
                 </button>
             </div>
         </div>
