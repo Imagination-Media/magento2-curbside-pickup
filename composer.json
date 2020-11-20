@@ -15,6 +15,12 @@
             "email": "igor@imaginationmedia.com",
             "homepage": "http://www.imaginationmedia.com/",
             "role": "Developer"
+        },
+        {
+            "name": "Antonio Lolić",
+            "email": "antonio@imaginationmedia.com",
+            "homepage": "http://www.imaginationmedia.com/",
+            "role": "Developer"
         }
     ],
     "autoload": {

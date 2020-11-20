@@ -40,4 +40,60 @@
             </argument>
         </arguments>
     </type>
+
+    <!-- Curbside Order Grid -->
+    <virtualType
+            name="CurbsideGridFilterPool"
+            type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="regular" xsi:type="object">
+                    Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter
+                </item>
+                <item name="fulltext" xsi:type="object">
+                    Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="curbside_order_listing_data_source" xsi:type="string">ImaginationMedia\CurbsidePickup\Model\ResourceModel\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Model\ResourceModel\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">sales_order_grid</argument>
+            <argument name="resourceModel" xsi:type="string">\Magento\Sales\Model\ResourceModel\Order</argument>
+        </arguments>
+    </type>
+
+    <!-- Curbside Order Service -->
+    <preference for="ImaginationMedia\CurbsidePickup\Action\CurbsideOrderInterface"
+                type="ImaginationMedia\CurbsidePickup\Model\Action\CurbsideOrder"/>
+
+    <!-- Curbside Email Notification Service -->
+    <preference for="\ImaginationMedia\CurbsidePickup\Action\EmailNotificationInterface"
+                type="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification"/>
+
+    <!-- Cron Logger -->
+    <virtualType name="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualDebug" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/curbside_email.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualDebug</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification">
+        <arguments>
+            <argument name="logger" xsi:type="object">ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualLogger</argument>
+        </arguments>
+    </type>
 </config>
