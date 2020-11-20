@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="curbside_email_order_accept_template" label="Curbside Order Accepted" file="curbside_order_accept.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
+    <template id="curbside_email_order_ready_template" label="Curbside Order Ready" file="curbside_order_ready.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
+    <template id="curbside_email_delivery_reminder_template" label="Curbside Pickup Delivery Reminder" file="curbside_delivery_reminder.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
+</config>
