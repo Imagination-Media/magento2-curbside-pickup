@@ -27,14 +27,6 @@ $curbsideViewModel = $block->getData('curbsideViewModel');
 <div class="order-details-items ordered">
     <?php $_order = $block->getOrder() ?>
 
-    <div class="actions-toolbar">
-        <div class="primary">
-            <a class="action back" href="<?= $escaper->escapeUrl($curbsideViewModel->getPickupViewUrl()) ?>">
-                <span><?= $escaper->escapeHtml(__('Curbside Pick up')) ?></span>
-            </a>
-        </div>
-    </div>
-
     <div class="order-title">
         <strong><?= $escaper->escapeHtml(__('Items Ordered')) ?></strong>
         <?php if (!empty($_order->getTracksCollection()->getItems())) : ?>

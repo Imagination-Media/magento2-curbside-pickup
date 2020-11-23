@@ -20,10 +20,10 @@ use Magento\Framework\Escaper;
 
 $_orders = $block->getOrders();
 
-/** @var OrderHistory $curbsideViewModel */
-$curbsideViewModel = $block->getData('curbsideViewModel');
+/** @var OrderHistory $historyViewModel */
+$historyViewModel = $block->getData('historyViewModel');
 
-$_curbsideOrders = $curbsideViewModel->filterCurbsideOrders($_orders);
+$_curbsideOrders = $historyViewModel->filterCurbsideOrders($_orders);
 ?>
 <?= $block->getChildHtml('info') ?>
 <?php if ($_curbsideOrders && count($_curbsideOrders)) : ?>
@@ -33,8 +33,8 @@ $_curbsideOrders = $curbsideViewModel->filterCurbsideOrders($_orders);
             <thead>
                 <tr>
                     <th scope="col" class="col id"><?= $escaper->escapeHtml(__('Order #')) ?></th>
-                    <th scope="col" class="col date"><?= $escaper->escapeHtml(__('Delivery Date')) ?></th>
-                    <th scope="col" class="col date"><?= $escaper->escapeHtml(__('Pickup Store')) ?></th>
+                    <th scope="col" class="col date"><?= $escaper->escapeHtml(__('Delivery Time')) ?></th>
+                    <th scope="col" class="col date"><?= $escaper->escapeHtml(__('Pickup Store Location')) ?></th>
                     <th scope="col" class="col date"><?= $escaper->escapeHtml(__('Date')) ?></th>
                     <?= $block->getChildHtml('extra.column.header') ?>
                     <th scope="col" class="col total"><?= $escaper->escapeHtml(__('Order Total')) ?></th>
@@ -45,11 +45,13 @@ $_curbsideOrders = $curbsideViewModel->filterCurbsideOrders($_orders);
             <tbody>
                 <?php foreach ($_orders as $_order) : ?>
                 <?php    /** @var Magento\Sales\Model\Order $_order */
-                        $curbsideData = $curbsideViewModel->getCurbsideData($_order); ?>
+                        $curbsideData = $historyViewModel->getCurbsideData($_order);
+                        $curbsideDeliveryTime = (new DateTime($curbsideData->getCurbsideDeliveryTime()))->format('m/d/y H:i A');
+                    ?>
                     <tr>
-                        <td data-th="<?= $escaper->escapeHtml(__('Order #')) ?>" class="col id"><?= $block->escapeHtml($_order->getRealOrderId()) ?></td>
-                        <td data-th="<?= $escaper->escapeHtml(__('Delivery Date')) ?>" class="col date"><?= /* @noEscape */ $block->formatDate($_order->getCreatedAt()) ?></td>
-                        <td data-th="<?= $escaper->escapeHtml(__('Pickup Date')) ?>" class="col date"><?= /* @noEscape */ $block->formatDate($_order->getCreatedAt()) ?></td>
+                        <td data-th="<?= $escaper->escapeHtml(__('Order #')) ?>" class="col id"><?= $escaper->escapeHtml($_order->getRealOrderId()) ?></td>
+                        <td data-th="<?= $escaper->escapeHtml(__('Delivery Time')) ?>" class="col date"><?= /* @noEscape */ $curbsideDeliveryTime ?></td>
+                        <td data-th="<?= $escaper->escapeHtml(__('Pickup Store Location')) ?>" class="col date"><?= /* @noEscape */ $curbsideData->getPickupLocationName() ?></td>
                         <td data-th="<?= $escaper->escapeHtml(__('Date')) ?>" class="col date"><?= /* @noEscape */ $block->formatDate($_order->getCreatedAt()) ?></td>
                         <?php $extra = $block->getChildBlock('extra.container'); ?>
                         <?php if ($extra) : ?>
@@ -59,7 +61,7 @@ $_curbsideOrders = $curbsideViewModel->filterCurbsideOrders($_orders);
                         <td data-th="<?= $escaper->escapeHtml(__('Order Total')) ?>" class="col total"><?= /* @noEscape */ $_order->formatPrice($_order->getGrandTotal()) ?></td>
                         <td data-th="<?= $escaper->escapeHtml(__('Status')) ?>" class="col status"><?= $block->escapeHtml($_order->getStatusLabel()) ?></td>
                         <td data-th="<?= $escaper->escapeHtml(__('Actions')) ?>" class="col actions">
-                            <a href="<?= $escaper->escapeUrl($curbsideViewModel->getViewPageUrl($_order)) ?>" class="action view">
+                            <a href="<?= $escaper->escapeUrl($historyViewModel->getViewPageUrl($_order)) ?>" class="action view">
                                 <span><?= $escaper->escapeHtml(__('View Order')) ?></span>
                             </a>
                         </td>

@@ -8,6 +8,7 @@
  *
  * @package ImaginationMedia\CurbsidePickup
  * @author Denis Colli Spalenza <denis@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -78,7 +79,7 @@
     <preference for="\ImaginationMedia\CurbsidePickup\Action\EmailNotificationInterface"
                 type="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification"/>
 
-    <!-- Cron Logger -->
+    <!-- Email Notifications Logger -->
     <virtualType name="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualDebug" type="Magento\Framework\Logger\Handler\Base">
         <arguments>
             <argument name="fileName" xsi:type="string">/var/log/curbside_email.log</argument>
@@ -95,5 +96,32 @@
         <arguments>
             <argument name="logger" xsi:type="object">ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualLogger</argument>
         </arguments>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Cron\SendDeliveryReminder">
+        <arguments>
+            <argument name="logger" xsi:type="object">ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualLogger</argument>
+        </arguments>
+    </type>
+
+    <!-- Pass Curbside data to Quote -->
+    <type name="Magento\Quote\Api\CartRepositoryInterface">
+        <plugin name="checkoutPassCurbsideInfoToQuote"
+                type="\ImaginationMedia\CurbsidePickup\Plugin\Magento\QuoteApi\CartRepositoryInterfacePlugin"
+                sortOrder="10"
+        />
+    </type>
+
+    <!-- Curbside Orders - Auth Protect middleware-->
+    <type name="ImaginationMedia\CurbsidePickup\Controller\Order\View">
+        <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Controller\Order\History">
+        <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Controller\Order\Pickup">
+        <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Controller\Order\PickupPost">
+        <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
     </type>
 </config>

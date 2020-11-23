@@ -19,7 +19,6 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Address\Renderer;
-use ImaginationMedia\CurbsidePickup\Model\Email\CurbsideOrderIdentity;
 use Magento\Sales\Model\Order\Email\Container\Template;
 use Magento\Sales\Model\Order\Email\Sender;
 use Magento\Sales\Model\Order\Email\SenderBuilder;
@@ -57,6 +56,7 @@ class CurbsideOrderSender extends Sender
      * @param LoggerInterface $logger
      * @param Renderer $addressRenderer
      * @param ManagerInterface $eventManager
+     * @param string $emailTemplateId
      */
     public function __construct(
         Template $templateContainer,
@@ -85,9 +85,8 @@ class CurbsideOrderSender extends Sender
         $this->identityContainer->setTemplateId($this->getEmailTemplateId());
         $this->identityContainer->setStore($order->getStore());
 
-        $transport = array_merge([
+        $transport = array_merge_recursive([
             'order' => $order,
-            //'comment' => $comment,
             'billing' => $order->getBillingAddress(),
             'store' => $order->getStore(),
             'formattedShippingAddress' => $this->getFormattedShippingAddress($order),
@@ -138,6 +137,6 @@ class CurbsideOrderSender extends Sender
      */
     private function getEmailTemplateId(): string
     {
-        return $this->templateId;
+        return $this->emailTemplateId;
     }
 }

@@ -25,7 +25,6 @@ $viewmodel = $block->getData('viewModel');
 $order = $viewmodel->getOrder();
 
 $deliveryTime = $block->formatDate($order->getCurbsideDeliveryTime(), \IntlDateFormatter::MEDIUM, true);
-//                    "curbsideOrderInfoHtml": "<?= $escaper->escapeHtml($viewmodel->getAdditionalCurbsideOrderHtml())
 
 if ($viewmodel->isCurbsideOrderViewPage()):
 // @codingStandardsIgnoreFile

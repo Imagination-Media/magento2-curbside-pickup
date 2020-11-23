@@ -65,9 +65,6 @@ require([
                                 title: jQuery.mage.__('Order Status'),
                                 content: data.message || jQuery.mage.__('You assigned the order status.')
                             });
-                            if (data.status === 'curbside_customer_ready') {
-
-                            }
                         }
                         if (data.error) {
                             alert({

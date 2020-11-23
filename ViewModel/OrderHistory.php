@@ -6,7 +6,7 @@
  * adding an option for a curbside pick up
  *
  * @package ImaginationMedia\CurbsidePickup
- * @author Denis Colli Spalenza <denis@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -16,12 +16,14 @@ declare(strict_types=1);
 namespace ImaginationMedia\CurbsidePickup\ViewModel;
 
 use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
+use Magento\Framework\DataObject;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 use ImaginationMedia\CurbsidePickup\Model\Config\Source\Status;
+use ImaginationMedia\CurbsidePickup\Model\Mapper\CurbsideDataFactory;
 
 class OrderHistory implements ArgumentInterface
 {
@@ -41,12 +43,19 @@ class OrderHistory implements ArgumentInterface
     private $curbsideStatuses;
 
     /**
+     * @var CurbsideDataFactory
+     */
+    private CurbsideDataFactory $curbsideDataFactory;
+
+    /**
      * OrderHistory constructor.
+     * @param CurbsideDataFactory $curbsideDataFactory
      * @param UrlInterface $url
      * @param Status $curbsideStatuses
      * @param LoggerInterface $logger
      */
     public function __construct(
+        CurbsideDataFactory $curbsideDataFactory,
         UrlInterface $url,
         Status $curbsideStatuses,
         LoggerInterface $logger
@@ -54,6 +63,7 @@ class OrderHistory implements ArgumentInterface
         $this->logger = $logger;
         $this->url = $url;
         $this->curbsideStatuses = $curbsideStatuses;
+        $this->curbsideDataFactory = $curbsideDataFactory;
     }
 
     /**
@@ -62,7 +72,6 @@ class OrderHistory implements ArgumentInterface
      */
     public function filterCurbsideOrders($collection)
     {
-        return $collection;
         if (!$collection) {
             return $collection;
         }
@@ -92,6 +101,15 @@ class OrderHistory implements ArgumentInterface
     private function getCurbsideStatusOptions(): array
     {
         return array_keys($this->curbsideStatuses->getOptions());
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return DataObject
+     */
+    public function getCurbsideData(OrderInterface $order): DataObject
+    {
+        return $this->curbsideDataFactory->create(['order' =>$order])->getData();
     }
 }
 

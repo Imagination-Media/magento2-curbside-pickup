@@ -13,8 +13,7 @@
 
 define([
     'jquery',
-    'Magento_Ui/js/modal/modal',
-    'mage/backend/notification'
+    'Magento_Ui/js/modal/modal'
 ], function (jQuery) {
     'use strict';
 

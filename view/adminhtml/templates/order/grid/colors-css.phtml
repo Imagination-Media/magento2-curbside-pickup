@@ -1,0 +1,35 @@
+<?php
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+declare(strict_types=1);
+
+/** @var \Magento\Framework\View\Element\Template  $block */
+
+use ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderStatusColors;
+
+/** @var OrderStatusColors $colors */
+$colorViewModel = $block->getData('colorViewModel');
+
+/** @var \ImaginationMedia\CurbsidePickup\Model\Config\Status\Colors $colors */
+$colors = $colorViewModel->getGridColorsConfiguration();
+?>
+
+<style type="text/css">
+    :root {
+        --accepted: <?= $colors::ORDER_ACCEPTED_HEX ?>;
+        --pickup-ready: <?= $colors::ORDER_READY_TO_PICKUP_HEX ?>;
+        --customer-ready: <?= $colors::ORDER_CUSTOMER_READY_HEX ?>;
+        --pending: <?= $colors::ORDER_PENDING_HEX ?>;
+        --delivered: <?= $colors::ORDER_DELIVERED_HEX ?>;
+    }
+</style>

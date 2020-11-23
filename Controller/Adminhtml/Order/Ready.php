@@ -28,7 +28,7 @@ use Magento\Sales\Model\Order;
 use Psr\Log\LoggerInterface;
 use ImaginationMedia\CurbsidePickup\Action\CurbsideOrderInterface;
 
-class Ready  extends Action implements HttpPostActionInterface
+class Ready extends Action implements HttpPostActionInterface
 {
     const ADMIN_RESOURCE = 'ImaginationMedia_CurbsidePickup::actions_ready';
 
@@ -51,6 +51,7 @@ class Ready  extends Action implements HttpPostActionInterface
      * @var CurbsideOrderInterface
      */
     private CurbsideOrderInterface $curbsideOrderService;
+
     /**
      * @var EmailNotificationInterface
      */
@@ -118,7 +119,7 @@ class Ready  extends Action implements HttpPostActionInterface
         } catch (\Exception $e) {
             $response = [
                 'error' => 'true',
-                'message' => $e->getMessage()
+                'message' => $e->getTraceAsString()
             ];
         }
         $this->_actionFlag->set('', self::FLAG_NO_POST_DISPATCH, true);

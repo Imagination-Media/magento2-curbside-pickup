@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\CurbsidePickup\Rewrite\Magento\Quote\Api\Data;
 
+use Magento\InventoryApi\Api\Data\SourceExtension;
+
 class AddressExtension extends \Magento\Quote\Api\Data\AddressExtension
 {
     public function __construct(array $data = [])
@@ -32,7 +34,7 @@ class AddressExtension extends \Magento\Quote\Api\Data\AddressExtension
 
     /**
      * @param boolean $isPickupLocationActive
-     * @return \Magento\InventoryApi\Api\Data\SourceExtension
+     * @return SourceExtension
      */
     public function setIsCurbsidePickupLocationActive($isPickupLocationActive)
     {
