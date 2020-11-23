@@ -1,0 +1,41 @@
+<?php
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+/** @var \Magento\Sales\Block\Order\View $block */
+
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+
+$deliveryTime = $block->formatDate($block->getOrder()->getCurbsideDeliveryTime(), \IntlDateFormatter::LONG, true);
+?>
+
+<div class="order-date">
+    <?= $escaper->escapeHtml(
+        __(
+            '<span class="label">Order Date:</span> %1',
+            '<span>' . $block->formatDate($block->getOrder()->getCreatedAt(), \IntlDateFormatter::LONG) . '</span>'
+        ),
+        ['span']
+    )?>
+</div>
+
+<div class="curbside-order-delivery-date">
+    <?= $escaper->escapeHtml(
+        __(
+            '<span class="label">Delivery Date:</span> %1',
+            '<span>' . $deliveryTime . '</span>'
+        ),
+        ['span']
+    )?>
+</div>

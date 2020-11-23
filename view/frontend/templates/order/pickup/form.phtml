@@ -1,0 +1,164 @@
+<?php
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+/** @var Template $block */
+
+use ImaginationMedia\CurbsidePickup\Helper\Data;
+use ImaginationMedia\CurbsidePickup\ViewModel\OrderView;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+/** @var Escaper $escaper */
+
+/** @var Template $block */
+
+/** @var OrderView $curbsideViewModel */
+$curbsideViewModel = $block->getData('curbsideViewModel');
+
+/** @var  $curbsideData */
+$curbsideData = $curbsideViewModel->getCurbsideData();
+$isPickupScheduledForStore = $this->helper(Data::class)->isScheduledPickupEnabled($curbsideViewModel->getStore());
+?>
+<form class="form form-edit-curbsude-pickup"
+      action="<?= $escaper->escapeUrl($block->getUrl('curbside/order/pickupPost')) ?>"
+      method="post" id="form-validate"
+      enctype="multipart/form-data"
+      autocomplete="off">
+
+    <fieldset class="fieldset info">
+        <?= $block->getBlockHtml('formkey') ?>
+        <legend class="legend"><span><?= $escaper->escapeHtml(__('Order Pickup Information')) ?></span></legend><br>
+
+        <div class="field car-model" data-container="car-model">
+            <label class="label" for="password-confirmation">
+                <span><?= $escaper->escapeHtml(__('Car Model')) ?></span>
+            </label>
+            <div class="control">
+                <input type="text"
+                       class="input-text"
+                       name="car_model"
+                       data-input="car-model"
+                       autocomplete="off"
+                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarModel()) ?>"
+                />
+            </div>
+        </div>
+
+        <div class="field car-plate" data-container="car-plate">
+            <label class="label" for="password-confirmation">
+                <span><?= $escaper->escapeHtml(__('Car Plate')) ?></span>
+            </label>
+            <div class="control">
+                <input type="text"
+                       class="input-text"
+                       name="car_plate"
+                       data-input="car-plate"
+                       autocomplete="off"
+                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarPlate()) ?>"
+                />
+            </div>
+        </div>
+
+        <div class="field car-color" data-container="car-color">
+            <label class="label" for="password-confirmation">
+                <span><?= $escaper->escapeHtml(__('Car Color')) ?></span>
+            </label>
+            <div class="control">
+                <input type="text"
+                       class="input-text"
+                       name="car_color"
+                       data-input="car-color"
+                       autocomplete="off"
+                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarColor()) ?>"
+                />
+            </div>
+        </div>
+
+        <?php if ($isPickupScheduledForStore): ?>
+            <div class="field scheduled-pickup" data-container="scheduled-pickup">
+                <label class="label" for="password-confirmation">
+                    <span><?= $escaper->escapeHtml(__('Pick up Time')) ?></span>
+                </label>
+                <div class="control">
+                    <input type="text"
+                           class="admin__control-text required-entry _required admin__control-text input-text input-date hasDatepicker"
+                           placeholder="<?= $escaper->escapeHtmlAttr(__('Select Time')) ?>"
+                           name="curbside_delivery_time"
+                           id="scheduled_pickup"
+                           data-input="scheduled-pickup"
+                           autocomplete="off"
+                           value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarPlate()) ?>"
+                    />
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <input type="hidden"
+               name="order_id"
+               value="<?= $escaper->escapeHtmlAttr($curbsideViewModel->getOrderId()) ?>"
+        />
+    </fieldset>
+
+    <fieldset class="fieldset additional_info">
+        <div class="field note" data-container="note">
+            <label class="label" for="password-confirmation">
+                <span><?= $escaper->escapeHtml(__('Note:')) ?></span>
+            </label>
+            <div class="control">
+                <textarea type="text"
+                          maxlength="300"
+                          rows="4"
+                          cols="10"
+                          class="input-text"
+                          name="note" autocomplete="off"
+                ><?= $curbsideData->getNote() ?></textarea>
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="submit" class="action save primary" title="<?= $escaper->escapeHtmlAttr(__('Save')) ?>">
+                <span><?= $escaper->escapeHtml(__('Save')) ?></span>
+            </button>
+        </div>
+        <div class="secondary">
+            <a class="action back" href="<?= $escaper->escapeUrl($curbsideViewModel->getBackUrl()) ?>">
+                <span><?= $escaper->escapeHtml(__('Go back')) ?></span>
+            </a>
+        </div>
+    </div>
+</form>
+
+<?php if ($isPickupScheduledForStore): ?>
+<?php $scriptString= <<<script
+    require([
+            'jquery',
+            'mage/mage',
+            'mage/calendar'
+        ], function ($) {
+
+            //<![CDATA[
+            $('#scheduled_pickup').calendar({
+                dateFormat: 'm/d/y H:i:s',
+                changeYear: true,
+                changeMonth: true,
+            });
+            //]]>
+        });
+    script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+<?php endif; ?>
