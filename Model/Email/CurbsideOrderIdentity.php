@@ -15,25 +15,13 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\CurbsidePickup\Model\Email;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Sales\Model\Order\Email\Container\Container;
 use Magento\Sales\Model\Order\Email\Container\IdentityInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 class CurbsideOrderIdentity extends Container implements IdentityInterface
 {
-//    /**
-//     * @var ScopeConfigInterface
-//     */
-//    private $scopeConfig;
-//
-//    /**
-//     * @var StoreManagerInterface
-//     */
-//    private $storeManager;
-//
     /**
      * @var string
      */
@@ -94,20 +82,6 @@ class CurbsideOrderIdentity extends Container implements IdentityInterface
     {
         return $this->getConfigValue(self::XML_PATH_EMAIL_IDENTITY, $this->getStore()->getStoreId());
     }
-
-//    /**
-//     * @param string $path
-//     * @param $storeId
-//     * @return mixed
-//     */
-//    protected function getConfigValue($path, $storeId)
-//    {
-//        return $this->scopeConfig->getValue(
-//            $path,
-//            ScopeInterface::SCOPE_STORE,
-//            $storeId
-//        );
-//    }
 
     /**
      * Return store

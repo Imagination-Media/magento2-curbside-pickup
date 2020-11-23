@@ -7,7 +7,6 @@
  *
  * @package ImaginationMedia\CurbsidePickup
  * @author Denis Colli Spalenza <denis@imaginationmedia.com>
- * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -20,7 +19,7 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
 /**
- * Render curbsided pickup location on sources grid.
+ * Render curbside pickup location on sources grid.
  */
 class IsCurbsidePickupLocationActive extends Column
 {

@@ -27,7 +27,11 @@
 
         <referenceBlock name="order.date" remove="true"/>
         <referenceContainer name="page.main.title">
-            <block class="Magento\Sales\Block\Order\Info" name="curbside-order.date" template="ImaginationMedia_CurbsidePickup::order/order_date.phtml" after="order.status"/>
+            <block class="Magento\Sales\Block\Order\Info" name="curbside-order.date" template="ImaginationMedia_CurbsidePickup::order/order_date.phtml" after="order.status">
+                <arguments>
+                    <argument name="curbsideViewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\OrderView</argument>
+                </arguments>
+            </block>
         </referenceContainer>
     </body>
 </page>

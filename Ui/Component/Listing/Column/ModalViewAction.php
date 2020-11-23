@@ -27,7 +27,7 @@ use Magento\Ui\Component\Listing\Columns\Column;
  */
 class ModalViewAction extends Column
 {
-    private const VIEW_ACTION_LABEL = 'View Order';
+    private const VIEW_ACTION_LABEL = 'Quick View';
 
     /**
      * @var UrlInterface

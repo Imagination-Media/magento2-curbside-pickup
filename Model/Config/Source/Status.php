@@ -54,9 +54,9 @@ class Status implements OptionSourceInterface
     public function getGridStatusOptions(): array
     {
         return [
-            OrderStatus::STATUS_ACCEPTED => __(OrderStatus::STATUS_ACCEPTED_GRID_ACTION_LABEL),
-            OrderStatus::STATUS_READY_TO_PICK_UP => __(OrderStatus::STATUS_READY_TO_PICK_UP_GRID_ACTION_LABEL),
-            OrderStatus::STATUS_CUSTOMER_READY => __(OrderStatus::STATUS_CUSTOMER_READY_GRID_ACTION_LABEL)
+            OrderStatus::STATUS_ACCEPTED => OrderStatus::STATUS_ACCEPTED_GRID_ACTION_LABEL,
+            OrderStatus::STATUS_READY_TO_PICK_UP => OrderStatus::STATUS_READY_TO_PICK_UP_GRID_ACTION_LABEL,
+            OrderStatus::STATUS_CUSTOMER_READY => OrderStatus::STATUS_CUSTOMER_READY_GRID_ACTION_LABEL
         ];
     }
 }

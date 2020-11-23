@@ -22,6 +22,7 @@ use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterf
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Sales\Exception\CouldNotInvoiceException;
 use Magento\Framework\DB\TransactionFactory;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -58,6 +59,7 @@ class Accept  extends Action implements HttpPostActionInterface
      * @var CurbsideOrderInterface
      */
     private CurbsideOrderInterface $curbsideOrderService;
+
     /**
      * @var EmailNotificationInterface
      */
@@ -153,10 +155,10 @@ class Accept  extends Action implements HttpPostActionInterface
 
     /**
      * @param Order $order
-     * @param \Magento\Sales\Api\Data\InvoiceInterface $invoice
+     * @param InvoiceInterface $invoice
      * @return Order
      */
-    private function syncOrderStatusHistory(Order $order, \Magento\Sales\Api\Data\InvoiceInterface $invoice): Order
+    private function syncOrderStatusHistory(Order $order, InvoiceInterface $invoice): Order
     {
         $order->addCommentToStatusHistory(__('Notified customer about invoice creation #%1.', $invoice->getEntityId()))
             ->setIsCustomerNotified(true);

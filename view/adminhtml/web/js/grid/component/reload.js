@@ -22,9 +22,13 @@ define([
     'use strict';
 
     return {
+
         dataSourcePath: 'curbside_order_listing.curbside_order_listing_data_source',
 
         refreshGridData: function () {
+            //@TODO Switch once CRON Async refresh set for Grid
+            // registry.get('index = curbside_order_listing').source.reload();
+
             var grid = registry.get(this.dataSourcePath);
             if (grid && typeof grid === 'object') {
                 grid.set('params.t', Date.now());

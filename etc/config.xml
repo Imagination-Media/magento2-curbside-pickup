@@ -17,8 +17,9 @@
         <sales_email>
             <curbside_order>
                 <enabled>1</enabled>
-                <accept_template>sales_email_order_template</accept_template>
-                <ready_template>sales_email_order_guest_template</ready_template>
+                <accept_template>sales_email_curbside_order_accept_template</accept_template>
+                <ready_template>sales_email_curbside_order_ready_template</ready_template>
+                <delivery_reminder_template>sales_email_curbside_order_delivery_reminder_template</delivery_reminder_template>
                 <identity>sales</identity>
                 <copy_method>bcc</copy_method>
             </curbside_order>

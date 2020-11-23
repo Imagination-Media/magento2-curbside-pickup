@@ -19,6 +19,7 @@ use ImaginationMedia\CurbsidePickup\Action\EmailNotificationInterface;
 use ImaginationMedia\CurbsidePickup\Helper\Data as CurbsideHelper;
 use ImaginationMedia\CurbsidePickup\Model\Email\CurbsideOrderSenderFactory;
 use Magento\Sales\Api\Data\OrderInterface;
+use ImaginationMedia\CurbsidePickup\Model\Mapper\CurbsideDataFactory;
 use Psr\Log\LoggerInterface;
 
 class EmailNotification implements EmailNotificationInterface
@@ -39,19 +40,27 @@ class EmailNotification implements EmailNotificationInterface
     private $logger;
 
     /**
+     * @var CurbsideDataFactory
+     */
+    private $curbsideDataFactory;
+
+    /**
      * EmailNotification constructor.
      * @param CurbsideOrderSenderFactory $curbsideOrderSenderFactory
+     * @param CurbsideDataFactory $curbsideDataFactory
      * @param CurbsideHelper $curbsideHelper
      * @param LoggerInterface $logger
      */
     public function __construct(
         CurbsideOrderSenderFactory $curbsideOrderSenderFactory,
+        CurbsideDataFactory $curbsideDataFactory,
         CurbsideHelper $curbsideHelper,
         LoggerInterface $logger
     ) {
         $this->curbsideHelper = $curbsideHelper;
         $this->curbsideOrderSenderFactory = $curbsideOrderSenderFactory;
         $this->logger = $logger;
+        $this->curbsideDataFactory = $curbsideDataFactory;
     }
 
     /**
@@ -64,7 +73,12 @@ class EmailNotification implements EmailNotificationInterface
             $emailTemplateId = $this->curbsideHelper->getDeliveryReminderTemplateId();
             return $this->curbsideOrderSenderFactory
                 ->create(['emailTemplateId' => $emailTemplateId])
-                ->send($order);
+                ->send($order, [
+                    'order_data' => [
+                        'curbside_delivery_time' => $this->getDeliveryTime($order),
+                        'pickup_location_name' => $this->getPickupLocationName($order)
+                    ]
+                ]);
         } catch (\Exception $e) {
             $this->logger->error(
                 'Pickup Reminder Email send failed for Order #' . $order->getEntityId(),
@@ -83,7 +97,7 @@ class EmailNotification implements EmailNotificationInterface
             $emailTemplateId = $this->curbsideHelper->getReadyTemplateId();
             return $this->curbsideOrderSenderFactory
                 ->create(['emailTemplateId' => $emailTemplateId])
-                ->send($order);
+                ->send($order, ['comment' => __('Please click "I\'m here" button once you come on location')]);
         } catch (\Exception $e) {
             $this->logger->error(
                 'Order Ready To Pickup Email failed for Order #' . $order->getEntityId(),
@@ -103,7 +117,7 @@ class EmailNotification implements EmailNotificationInterface
             $emailTemplateId = $this->curbsideHelper->getAcceptTemplateId();
             return $this->curbsideOrderSenderFactory
                 ->create(['emailTemplateId' => $emailTemplateId])
-                ->send($order);
+                ->send($order, ['comment' => __('Please visit order page for order schedule. You will recieve an invoice in separate email.')]);
         } catch (\Exception $e) {
             $this->logger->error(
                 'Order Accepted Email failed for Order #' . $order->getEntityId(),
@@ -111,5 +125,25 @@ class EmailNotification implements EmailNotificationInterface
             );
         }
         return false;
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return string
+     * @throws \Exception
+     */
+    private function getDeliveryTime(OrderInterface $order): string
+    {
+        return (new \DateTime($order->getCurbsideDeliveryTime()))->format('m/d/y H:i A');
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return string|null
+     * @throws \Exception
+     */
+    private function getPickupLocationName(OrderInterface $order): ?string
+    {
+        return $this->curbsideDataFactory->create(['order' => $order])->getPickupLocationName();
     }
 }

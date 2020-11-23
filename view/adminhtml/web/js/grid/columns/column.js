@@ -18,7 +18,6 @@ define([], function (Column) {
         return Column.extend({
 
             initialize: function () {
-                console.info('Column mixin');
                 this._super();
             },
 
@@ -34,6 +33,8 @@ define([], function (Column) {
                     return 'curbside-ready';
                 } else if (order.status === 'curbside_customer_ready') {
                     return 'curbside-customer-ready';
+                }  else if (order.status === 'complete') {
+                    return 'delivered';
                 }
                 return 'pending';
             }

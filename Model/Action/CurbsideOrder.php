@@ -47,27 +47,27 @@ class CurbsideOrder implements CurbsideOrderInterface
     /**
      * @var ShipmentRepositoryInterface
      */
-    private ShipmentRepositoryInterface $shipmentRepository;
+    private $shipmentRepository;
 
     /**
      * @var LoggerInterface
      */
-    private LoggerInterface $logger;
+    private $logger;
 
     /**
      * @var InvoiceSender
      */
-    private InvoiceSender $invoiceSender;
+    private $invoiceSender;
 
     /**
      * @var CurbsideOrderModel
      */
-    private CurbsideOrderModel $curbsideOrderModel;
+    private $curbsideOrderModel;
 
     /**
      * @var SerializerInterface
      */
-    private SerializerInterface $json;
+    private $json;
 
     /**
      * @param CurbsideOrderModel $curbsideOrderModel
@@ -155,7 +155,11 @@ class CurbsideOrder implements CurbsideOrderInterface
      * @param string|null $comment
      * @return null|OrderInterface
      */
-    public function updateStatus(string $status, OrderInterface $order, ?string $comment = null): ?OrderInterface
+    public function updateStatus(
+        string $status,
+        OrderInterface $order,
+        ?string $comment = null
+    ): ?OrderInterface
     {
         try {
             $order->setState(Order::STATE_PROCESSING);
@@ -174,6 +178,7 @@ class CurbsideOrder implements CurbsideOrderInterface
 
         return null;
     }
+
     /**
      * @param OrderInterface $order
      * @param array $data
@@ -183,9 +188,14 @@ class CurbsideOrder implements CurbsideOrderInterface
     public function saveCurbsideData(OrderInterface $order, array $data): ?OrderInterface
     {
         try {
-            $order->setCurbsideDeliveryTime($data['curbside_delivery_time']);
-            unset($data['curbside_delivery_time']);
-            $order->setCurbsideData($this->json->serialize($data));
+            $deliveryTime = new \DateTime($data['curbside_delivery_time']);
+            $order->setCurbsideDeliveryTime($deliveryTime->format('Y-m-d H:i:s'));
+
+            $dataJson = $this->json->serialize(array_filter($data,
+                fn($key) => in_array($key, ['car_model', 'car_plate', 'car_color', 'note']),
+                ARRAY_FILTER_USE_KEY
+            ));
+            $order->setCurbsideData($dataJson);
 
             /** @var Order $order */
             $order = $this->orderRepository->save($order);

@@ -6,7 +6,7 @@
  * adding an option for a curbside pick up
  *
  * @package ImaginationMedia\CurbsidePickup
- * @author Denis Colli Spalenza <denis@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -15,16 +15,15 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\CurbsidePickup\ViewModel;
 
-use Magento\Framework\DataObject;
-use Magento\Framework\Phrase;
-use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\App\Http\Context;
-use Magento\Framework\Registry;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Phrase;
+use Magento\Framework\Registry;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\UrlInterface;
 use Psr\Log\LoggerInterface;
 
 class OrderView implements ArgumentInterface
@@ -50,11 +49,6 @@ class OrderView implements ArgumentInterface
     private UrlInterface $url;
 
     /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $json;
-
-    /**
      * @var RequestInterface
      */
     private RequestInterface $request;
@@ -65,9 +59,14 @@ class OrderView implements ArgumentInterface
     private LoggerInterface $logger;
 
     /**
+     * @var SerializerInterface
+     */
+    private SerializerInterface $json;
+
+    /**
      * OrderView constructor.
-     * @param UrlInterface $url
      * @param SerializerInterface $json
+     * @param UrlInterface $url
      * @param RequestInterface $request
      * @param OrderRepositoryInterface $orderRepository
      * @param Registry $registry
@@ -75,8 +74,8 @@ class OrderView implements ArgumentInterface
      * @param Context $context
      */
     public function __construct(
-        UrlInterface $url,
         SerializerInterface $json,
+        UrlInterface $url,
         RequestInterface $request,
         OrderRepositoryInterface $orderRepository,
         Registry $registry,
@@ -87,18 +86,9 @@ class OrderView implements ArgumentInterface
         $this->registry = $registry;
         $this->orderRepository = $orderRepository;
         $this->url = $url;
-        $this->json = $json;
         $this->request = $request;
         $this->logger = $logger;
-    }
-
-    /**
-     * @return DataObject
-     */
-    public function getCurbsideData(): DataObject
-    {
-        $data = $this->getOrder()->getCurbsideData();
-        return new DataObject($data);
+        $this->json = $json;
     }
 
     /**
@@ -108,17 +98,20 @@ class OrderView implements ArgumentInterface
      */
     public function getBackTitle(): Phrase
     {
-         if ($this->context->getValue(\Magento\Customer\Model\Context::CONTEXT_AUTH)) {
+        if ($this->context->getValue(\Magento\Customer\Model\Context::CONTEXT_AUTH)) {
             return __('Back to My Curbside Orders');
         }
         return __('View Another Curbside Order');
     }
 
     /**
-     * @return int|null
+     * @return string|null
      */
-    public function getOrderId(): ?int
+    public function getOrderId(): ?string
     {
+        if (!$this->getOrder()) {
+            return null;
+        }
         return $this->getOrder()->getEntityId();
     }
 
@@ -140,18 +133,13 @@ class OrderView implements ArgumentInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPickupScheduledTime(): string
+    public function getStore(): ?string
     {
-        return $this->getOrder()->getCurbsideDeliveryTime();
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getStore(): ?int
-    {
+        if (!$this->getOrder()) {
+            return null;
+        }
         return $this->getOrder()->getStoreId();
     }
 
@@ -171,5 +159,41 @@ class OrderView implements ArgumentInterface
             $this->logger->error($e->getTraceAsString());
         }
     }
-}
 
+    /**
+     * @param string $jsonCurbsideData
+     * @return string
+     */
+    public function formatToHtmlList(?string $jsonCurbsideData): string
+    {
+        if ($jsonCurbsideData === null) {
+            return '-';
+        }
+        $curbsideData = $this->json->unserialize($jsonCurbsideData);
+        $curbsideDataList = '<ul class="curbside_data_list">';
+        foreach ($curbsideData as $field => $item) {
+            if (!$item) {
+                continue;
+            }
+            if (is_array($item) && !empty($item)) {
+                $curbsideDataList .= '<li>';
+                $this->formatToList($item);
+                $curbsideDataList .= '</li>';
+            } else {
+                $curbsideDataList .= '<li><span class="curbside_data_label">' . $this->formatToLabel($field) . '</span>: ' . $item . '</li>';
+            }
+        }
+        $curbsideDataList .= "</ul>";
+
+        return $curbsideDataList;
+    }
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    private function formatToLabel(string $key): string
+    {
+        return ucfirst(str_replace('_', ' ', $key));
+    }
+}

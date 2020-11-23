@@ -19,6 +19,7 @@ declare(strict_types=1);
 /** @var \Magento\Framework\View\Element\Template  $block */
 
 /** @var Magento\Sales\Model\Order $order */
+
 $order = $block->getOrder();
 
 $deliveryTime = $block->formatDate($order->getCurbsideDeliveryTime(), \IntlDateFormatter::MEDIUM, true);
@@ -30,5 +31,9 @@ $deliveryTime = $block->formatDate($order->getCurbsideDeliveryTime(), \IntlDateF
 </tr>
 <tr>
     <th><?= $escaper->escapeHtml(__('Curbside Order Status')) ?></th>
-    <td><?= $escaper->escapeHtml($order->getStatusLabel()) ?></td>
+    <td>
+        <span class="curbside-status <?= $escaper->escapeHtmlAttr($block->getStatusColorClass()) ?>">
+        <?= $escaper->escapeHtml($order->getStatusLabel()) ?>
+        </span>
+    </td>
 </tr>

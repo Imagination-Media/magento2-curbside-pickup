@@ -27,25 +27,29 @@ use Magento\Sales\Model\Convert\Order as OrderConverter;
 
 class CurbsideOrder
 {
+    public const FIELD_CURBSIDE               = "curbside";
+    public const FIELD_CURBSIDE_DATA          = "curbside_data";
+    public const FIELD_CURBSIDE_DELIVERY_TIME = "curbside_delivery_time";
+
     /**
      * @var InvoiceRepositoryInterface
      */
-    private InvoiceRepositoryInterface $invoiceRepository;
+    private $invoiceRepository;
 
     /**
      * @var InvoiceService
      */
-    private InvoiceService $invoiceService;
+    private $invoiceService;
 
     /**
      * @var TransactionFactory
      */
-    private TransactionFactory $transactionFactory;
+    private $transactionFactory;
 
     /**
      * @var OrderConverter
      */
-    private OrderConverter $orderConverter;
+    private $orderConverter;
 
     /**
      * CurbsideOrder constructor.

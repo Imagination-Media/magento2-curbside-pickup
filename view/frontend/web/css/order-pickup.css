@@ -12,7 +12,23 @@
  */
 -->
 
-/*.order-date .label { */
-/*    display: block;*/
-/*}*/
+.scheduled-pickup .delivery-note {
+    font-size: 0.75em;
+    margin: 0.5rem 0;
+}
+
+.form-edit-curbside-pickup {
+    max-width: 500px;
+    width: 100%;
+}
+
+.picked-up {
+    color: #008000;
+    font-weight: 400;
+}
+
+.pickup-availability {
+    color: #cf1525;
+    font-weight: 400;
+}
 

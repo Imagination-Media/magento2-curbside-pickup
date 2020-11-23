@@ -15,13 +15,20 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="styles"/>
+
     <head>
         <css src="ImaginationMedia_CurbsidePickup::css/curbside_pickup/grid.css"/>
+        <css src="ImaginationMedia_CurbsidePickup::css/curbside_pickup/view.css"/>
     </head>
     <body>
         <referenceContainer name="content">
             <uiComponent name="curbside_order_listing"/>
             <referenceContainer name="js">
+                <block template="ImaginationMedia_CurbsidePickup::order/grid/colors-css.phtml" before="curbsidepickup.js" name="curbsidepickup.colors" >
+                    <arguments>
+                        <argument name="colorViewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderStatusColors</argument>
+                    </arguments>
+                </block>
                 <block template="ImaginationMedia_CurbsidePickup::order/js/index.phtml" name="curbsidepickup.js" />
             </referenceContainer>
         </referenceContainer>

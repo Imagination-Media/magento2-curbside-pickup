@@ -19,6 +19,7 @@ use ImaginationMedia\CurbsidePickup\Action\EmailNotificationInterface;
 use ImaginationMedia\CurbsidePickup\Helper\Data;
 use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Psr\Log\LoggerInterface;
 
@@ -69,20 +70,21 @@ class SendDeliveryReminder
      */
     public function execute()
     {
-        $isScheduledPickupActive = $this->curbsidePickupHelper->isScheduledPickupEnabled();
-        if (!$isScheduledPickupActive) {
+        if (!$this->curbsidePickupHelper->isScheduledPickupEnabled()
+          || !$this->curbsidePickupHelper->isEmailNotificationsEnabled()
+        ) {
             return;
         }
 
         $currentDateFormatted = new \DateTime('now');
-        $oneHour = new \DateInterval('P1H');
+        $oneHour = new \DateInterval('PT1H');
         $targetDeliveryDateFormatted = $currentDateFormatted->add($oneHour)->format('Y-m-d H:i');
 
-        /** @var $orders \Magento\Sales\Model\ResourceModel\Order\Collection */
-        $orders = $this->orderCollectionFactory->create();
-        $orders->addFieldToFilter('curbside', OrderStatus::STATUS_ACTIVE);
-        $orders->addFieldToFilter('status', ['eq' => OrderStatus::STATUS_READY_TO_PICK_UP]);
-        $orders->addFieldToFilter('curbside_delivery_time', ['neq' => null]);
+        /** @var $orders Collection */
+        $orders = $this->orderCollectionFactory->create()
+            ->addFieldToFilter('curbside', OrderStatus::STATUS_ACTIVE)
+            ->addFieldToFilter('status', ['eq' => OrderStatus::STATUS_CUSTOMER_READY])
+            ->addFieldToFilter('curbside_delivery_time', ['neq' => null]);
 
         $numberEmailsSent = 0;
         if ($orders->getSize() < 1) {
@@ -92,11 +94,8 @@ class SendDeliveryReminder
         foreach ($orders->getItems() as $order) {
             /** @var Order $order */
 
-            $checkDeliveryTime = $this->curbsidePickupHelper->getFormattedDate(
-                $order->getCurbsideDeliveryTime(),
-                'Y-m-d H:i'
-            );
-            if ($checkDeliveryTime === $targetDeliveryDateFormatted) {
+            $checkDeliveryTime = (new \DateTime($order->getCurbsideDeliveryTime()))->format('Y-m-d H:i');
+            if ($checkDeliveryTime !== $targetDeliveryDateFormatted) {
                 continue;
             }
             if ($this->emailNotification->sendPickupReminder($order)) {

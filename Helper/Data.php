@@ -16,7 +16,10 @@ declare(strict_types=1);
 namespace ImaginationMedia\CurbsidePickup\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Data extends AbstractHelper
 {
@@ -30,9 +33,26 @@ class Data extends AbstractHelper
     /**
      * Email Templates
      */
+    public const XML_PATH_IS_EMAIL_NOTIFICATION_ENABLED = 'sales_email/curbside_order/enabled';
     public const XML_PATH_EMAIL_ACCEPT_TEMPLATE = 'sales_email/curbside_order/accept_template';
     public const XML_PATH_EMAIL_READY_TEMPLATE = 'sales_email/curbside_order/ready_template';
     public const XML_PATH_EMAIL_DELIVERY_REMINDER_TEMPLATE = 'sales_email/curbside_order/delivery_reminder_template';
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * Data constructor.
+     * @param StoreManagerInterface $storeManager
+     * @param Context $context
+     */
+    public function __construct(StoreManagerInterface $storeManager, Context $context)
+    {
+        parent::__construct($context);
+        $this->storeManager = $storeManager;
+    }
 
     /**
      * @param null|mixed $store
@@ -42,6 +62,19 @@ class Data extends AbstractHelper
     {
         return $this->scopeConfig->isSetFlag(
             self::XML_IS_SCHEDULED_PICKUP,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
+    }
+
+    /**
+     * @param null|mixed $store
+     * @return bool
+     */
+    public function isEmailNotificationsEnabled($store = null): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PATH_IS_EMAIL_NOTIFICATION_ENABLED,
             ScopeInterface::SCOPE_STORE,
             $store
         );
@@ -62,9 +95,9 @@ class Data extends AbstractHelper
 
     /**
      * @param null|mixed $store
-     * @return mixed
+     * @return int
      */
-    public function getPickupThreshold($store = null)
+    public function getPickupThreshold($store = null): ?int
     {
         return $this->scopeConfig->getValue(
             self::XML_PICKUP_THRESHOLD,
@@ -80,7 +113,7 @@ class Data extends AbstractHelper
      */
     public function getAcceptTemplateId()
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_EMAIL_ACCEPT_TEMPLATE, $this->getStore()->getStoreId());
+        return $this->scopeConfig->getValue(self::XML_PATH_EMAIL_ACCEPT_TEMPLATE);
     }
 
     /**
@@ -90,7 +123,7 @@ class Data extends AbstractHelper
      */
     public function getReadyTemplateId()
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_EMAIL_READY_TEMPLATE, $this->getStore()->getStoreId());
+        return $this->scopeConfig->getValue(self::XML_PATH_EMAIL_READY_TEMPLATE);
     }
 
     /**
@@ -100,7 +133,7 @@ class Data extends AbstractHelper
      */
     public function getDeliveryReminderTemplateId()
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_EMAIL_DELIVERY_REMINDER_TEMPLATE, $this->getStore()->getStoreId());
+        return $this->scopeConfig->getValue(self::XML_PATH_EMAIL_DELIVERY_REMINDER_TEMPLATE);
     }
 
     /**
@@ -123,5 +156,15 @@ class Data extends AbstractHelper
         }
 
         return $datetime->format($format);
+    }
+
+    /**
+     * Return store
+     *
+     * @return StoreInterface
+     */
+    private function getStore(): StoreInterface
+    {
+        return $this->storeManager->getStore();
     }
 }

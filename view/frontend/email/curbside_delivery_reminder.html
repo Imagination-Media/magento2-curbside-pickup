@@ -12,13 +12,14 @@
  */
  -->
 
-<!--@subject {{trans "Update to your %store_name order" store_name=$store.frontend_name}} @-->
+<!--@subject {{trans "Delivery reminder for %store_name order" store_name=$store.frontend_name}} @-->
 <!--@vars {
-"var this.getUrl($store,'customer/account/',[_nosid:1])":"Customer Account URL",
+"var this.getUrl($store,'curbside/order/view',[order_id:$order.increment_id,_nosid:1])":"Curbside Order URL",
 "var order_data.customer_name":"Customer Name",
-"var comment|escape|nl2br":"Order Comment",
 "var order.increment_id":"Order Id",
 "var order_data.frontend_status_label":"Order Status",
+"var order_data.curbside_delivery_time":"Order Curbside Delivery Time",
+"var order_data.pickup_location_name":"Order Pick Up Location",
 "var store.frontend_name":"Store Frontend Name",
 "var store_email":"Store Email",
 "var store_phone":"Store Phone",
@@ -32,32 +33,21 @@
             <p class="greeting">{{trans "%name," name=$order_data.customer_name}}</p>
             <p>
                 {{trans
-                    "Your order #%increment_id has been updated with a status of <strong>%order_status</strong>."
-
+                    "Your order #%increment_id is ready for be delivered in 1 hour (<strong>%curbside_delivery_time</strong>)"
                     increment_id=$order.increment_id
-                    order_status=$order_data.frontend_status_label
+                    curbside_delivery_time=$order_data.curbside_delivery_time
                 |raw}}
             </p>
-            <p>{{trans 'You can check the status of your order by <a href="%account_url">logging into your account</a>.' account_url=$this.getUrl($store,'customer/account/',[_nosid:1]) |raw}}</p>
+            <p>{{trans 'Be free to inform us <a href="%order_url">here</a>' order_url=$this.getUrl($store,'curbside/order/pickup/',[order_id:$order.id,_nosid:1]) |raw}} {{trans 'once when on location.'}}</p>
             <p>
+                {{depend $order_data.pickup_location_name}}
+                {{trans 'Pick up Store Location: <span class="no-link">%pickup_location_name</span>.' pickup_location_name=$order_data.pickup_location_name |raw}}
+                {{/depend}}
                 {{trans 'If you have questions about your order, you can email us at <a href="mailto:%store_email">%store_email</a>' store_email=$store_email |raw}}{{depend store_phone}} {{trans 'or call us at <a href="tel:%store_phone">%store_phone</a>' store_phone=$store_phone |raw}}{{/depend}}.
                 {{depend store_hours}}
                     {{trans 'Our hours are <span class="no-link">%store_hours</span>.' store_hours=$store_hours |raw}}
                 {{/depend}}
             </p>
-        </td>
-    </tr>
-    <tr class="email-information">
-        <td>
-            {{depend comment}}
-            <table class="message-info">
-                <tr>
-                    <td>
-                        {{var comment|escape|nl2br}}
-                    </td>
-                </tr>
-            </table>
-            {{/depend}}
         </td>
     </tr>
 </table>

@@ -47,7 +47,10 @@ class OrderStatus implements DataPatchInterface
     public const STATUS_CUSTOMER_READY_LABEL = 'Customer is ready to pick-up';
     public const STATUS_CUSTOMER_READY_GRID_ACTION_LABEL = 'Deliver';
 
-    public const STATUS_COMPLETE_LABEL = 'Delivered';
+    public const STATUS_COMPLETE_LABEL = 'Completed';
+    public const STATUS_WAITING_USER_LABEL = 'Waiting for user...';
+
+    public const STATUS_PENDING = 'pending';
 
     /**
      * @var StatusFactory

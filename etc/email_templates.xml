@@ -13,7 +13,7 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
-    <template id="curbside_email_order_accept_template" label="Curbside Order Accepted" file="curbside_order_accept.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
-    <template id="curbside_email_order_ready_template" label="Curbside Order Ready" file="curbside_order_ready.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
-    <template id="curbside_email_delivery_reminder_template" label="Curbside Pickup Delivery Reminder" file="curbside_delivery_reminder.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
+    <template id="sales_email_curbside_order_accept_template" label="Curbside Order Accepted" file="curbside_order_accepted.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
+    <template id="sales_email_curbside_order_ready_template" label="Curbside Order Ready" file="curbside_order_ready.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
+    <template id="sales_email_curbside_order_delivery_reminder_template" label="Curbside Pickup Delivery Reminder" file="curbside_delivery_reminder.html" type="html" module="ImaginationMedia_CurbsidePickup" area="frontend"/>
 </config>

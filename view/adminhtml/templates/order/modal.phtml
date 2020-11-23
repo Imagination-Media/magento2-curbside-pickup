@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Curbside pickup for Magento 2
  *
@@ -14,17 +13,32 @@
 
 declare(strict_types=1);
 
-/** @var \Magento\Framework\Escaper $escaper */
+/** @var Escaper $escaper */
 
-/** @var \Magento\Framework\View\Element\Template  $block */
+/** @var Template  $block */
 
-/** @var \ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderModal $viewmodel */
-$viewmodel = $block->getData('viewModel');
+/** @var OrderModal $modalViewModel */
+
+use ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderModal;
+use ImaginationMedia\CurbsidePickup\ViewModel\OrderView;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderStatusColors;
+
+/** @var OrderModal $modalViewModel */
+$modalViewModel = $block->getData('modalViewModel');
+
+/** @var OrderView $orderViewModel */
+$orderViewModel = $block->getData('orderViewModel');
 
 /** @var Magento\Sales\Model\Order $order */
-$order = $viewmodel->getOrder();
+$order = $modalViewModel->getOrder();
 
 $deliveryTime = $block->formatDate($order->getCurbsideDeliveryTime(), \IntlDateFormatter::MEDIUM, true);
+$additionalInfo = $orderViewModel->formatToHtmlList($order->getCurbsideData());
+
+/** @var OrderStatusColors $colors */
+$colorViewModel = $block->getData('colorViewModel');
 ?>
 
 <div class="curbside_order_summary">
@@ -42,11 +56,15 @@ $deliveryTime = $block->formatDate($order->getCurbsideDeliveryTime(), \IntlDateF
             </tr>
             <tr>
                 <th><?= $escaper->escapeHtml(__(' Order Status:')) ?></th>
-                <td><?= $escaper->escapeHtml($order->getStatusLabel()) ?></td>
+                <td><span class="curbside-status <?= $escaper->escapeHtmlAttr($colorViewModel->getStatusColorClass($order->getStatus())) ?>"><?= $escaper->escapeHtml($order->getStatusLabel()) ?></span></td>
             </tr>
             <tr>
                 <th><?= $escaper->escapeHtml(__('Paid Amount:')) ?></th>
-                <td><?= $escaper->escapeHtml($viewmodel->getAmountPaid()) ?></td>
+                <td><?= $escaper->escapeHtml($modalViewModel->getAmountPaid()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml(__('Additional Info:')) ?></th>
+                <td><?= /* @noEscape */ $additionalInfo ?></td>
             </tr>
         </table>
     </div>

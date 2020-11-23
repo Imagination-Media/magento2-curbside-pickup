@@ -6,7 +6,7 @@
  * adding an option for a curbside pick up
  *
  * @package ImaginationMedia\CurbsidePickup
- * @author Denis Colli Spalenza <denis@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Serialize\SerializerInterface;
+use ImaginationMedia\CurbsidePickup\Model\Config\Status\Colors;
 
 class OrderInfo implements ArgumentInterface
 {
@@ -69,6 +70,11 @@ class OrderInfo implements ArgumentInterface
     private $json;
 
     /**
+     * @var Colors
+     */
+    private $colorsConfig;
+
+    /**
      * OrderInfo constructor.
      * @param SerializerInterface $json
      * @param Http $httpRequest
@@ -76,6 +82,7 @@ class OrderInfo implements ArgumentInterface
      * @param RequestInterface $request
      * @param OrderRepositoryInterface $order
      * @param Registry $registry
+     * @param Colors $colorsConfig
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -85,6 +92,7 @@ class OrderInfo implements ArgumentInterface
         RequestInterface $request,
         OrderRepositoryInterface $order,
         Registry $registry,
+        Colors $colorsConfig,
         LoggerInterface $logger
     ) {
         $this->registry = $registry;
@@ -94,6 +102,7 @@ class OrderInfo implements ArgumentInterface
         $this->layoutFactory = $layoutFactory;
         $this->httpRequest = $httpRequest;
         $this->json = $json;
+        $this->colorsConfig = $colorsConfig;
     }
 
     /**
@@ -126,9 +135,11 @@ class OrderInfo implements ArgumentInterface
     public function getAdditionalCurbsideOrderHtml(): string
     {
         try {
+            $status = $this->getOrder()->getStatus();
             return $this->layoutFactory->create()
                 ->createBlock(Template::class)
                 ->setTemplate('ImaginationMedia_CurbsidePickup::order/info.phtml')
+                ->setStatusColorClass($this->colorsConfig->getStatusColorClass($status))
                 ->setOrder($this->getCurrentOrder())
                 ->toHtml();
 
@@ -143,7 +154,6 @@ class OrderInfo implements ArgumentInterface
      */
     public function isCurbsideOrderViewPage(): bool
     {
-        $x= $this->httpRequest->getFullActionName();
         return $this->httpRequest->getFullActionName() === 'curbside_order_view';
     }
 

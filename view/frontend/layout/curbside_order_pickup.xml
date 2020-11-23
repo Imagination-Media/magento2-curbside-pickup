@@ -20,13 +20,13 @@
     <body>
         <referenceBlock name="page.main.title">
             <action method="setPageTitle">
-                <argument translate="true" name="title" xsi:type="string">Edit Curbside Pickup Information</argument>
+                <argument translate="true" name="title" xsi:type="string">Curbside Pickup Information</argument>
             </action>
         </referenceBlock>
         <referenceContainer name="content">
-            <block name="curbside_pickup_form" template="ImaginationMedia_CurbsidePickup::pickup/form/edit.phtml" cacheable="false">
+            <block class="Magento\Framework\View\Element\Template" name="curbside_pickup_form" template="ImaginationMedia_CurbsidePickup::order/pickup/form.phtml" cacheable="false">
                 <arguments>
-                    <argument name="curbsideViewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\OrderView</argument>
+                    <argument name="pickupViewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\OrderPickup</argument>
                 </arguments>
             </block>
         </referenceContainer>

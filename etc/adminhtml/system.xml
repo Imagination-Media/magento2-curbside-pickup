@@ -27,12 +27,12 @@
                     <field id="threshold" translate="label comment" type="text" showInDefault="1" showInWebsite="1" showInStore="20">
                         <label>Threshold to allow the pickup</label>
                         <config_path>carriers/instore_curbside/threshold</config_path>
-                        <comment>the minimum required time an order takes to be ready for pick up.</comment>
+                        <comment>The minimum required time (in hours) an order takes to be ready for pick up.</comment>
                     </field>
                     <field id="scheduled_pickup" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                         <label>Scheduled Pickup</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <comment>If Enabled it will send email reminder as configure in sales mail section for it</comment>
+                        <comment>If Enabled it will send email reminder to customer 1 hour before delivery time</comment>
                     </field>
                 </group>
             </group>
@@ -47,7 +47,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="identity" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>New Curbside Order Email Sender</label>
+                    <label>New Order Email Sender</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
                     <depends>
                         <field id="enabled">1</field>
@@ -61,7 +61,7 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="ready _template" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="ready_template" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>New Order Ready Template</label>
                     <comment>Email template chosen based on theme fallback when "Default" option is selected.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
@@ -77,15 +77,8 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="delivery_reminder_hours_before" translate="label comment" type="text"  sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="20">
-                    <label>Remind hour(s) before delivery</label>
-                    <comment>Send reminder hours before delivery.</comment>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
-                </field>
                 <field id="copy_to" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Send Curbside Notifications Email Copy To</label>
+                    <label>Send Notification Emails Copy To</label>
                     <comment>Comma-separated.</comment>
                     <validate>validate-emails</validate>
                     <depends>
@@ -93,7 +86,7 @@
                     </depends>
                 </field>
                 <field id="copy_method" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Send Curbside Notifications Email Copy Method</label>
+                    <label>Send Notifications Email Copy Method</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Method</source_model>
                     <depends>
                         <field id="enabled">1</field>

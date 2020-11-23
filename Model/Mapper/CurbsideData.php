@@ -24,12 +24,12 @@ class CurbsideData
     /**
      * @var OrderInterface
      */
-    private OrderInterface $order;
+    private $order;
 
     /**
      * @var SerializerInterface
      */
-    private SerializerInterface $json;
+    private $json;
 
     /**
      * CurbsideData constructor.
@@ -48,6 +48,30 @@ class CurbsideData
     public function getCarPlate(): ?string
     {
         return $this->getData()->getCarPlate();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNote(): ?string
+    {
+        return $this->getData()->getNote();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getParkingSpot(): ?string
+    {
+        return $this->getData()->getParkingSpot();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPickupLocationName(): ?string
+    {
+        return $this->getData()->getPickupLocationName();
     }
 
     /**

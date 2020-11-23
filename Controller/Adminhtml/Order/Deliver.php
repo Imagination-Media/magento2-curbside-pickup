@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\CurbsidePickup\Controller\Adminhtml\Order;
 
-use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
 use Magento\Framework\Controller\Result\Json;
@@ -45,6 +44,7 @@ class Deliver  extends Action implements HttpPostActionInterface
      * @var JsonFactory
      */
     private JsonFactory $resultJsonFactory;
+
     /**
      * @var CurbsideOrderInterface
      */
@@ -98,13 +98,13 @@ class Deliver  extends Action implements HttpPostActionInterface
             $response = [
                 'success' => 'true',
                 'status' => $order->getStatus(),
-                'message' => __('Order has been marked as Shipped. . Shipment ID: #%1 . Order Status update: delivered to customer.', $shipment->getEntityId())
+                'message' => __('Order has been marked as Shipped. Shipment ID: #%1 . Order Status update: delivered to customer.', $shipment->getEntityId())
             ];
         } catch (CouldNotShipException $e) {
             $this->logger->error($e->getMessage());
             $response = [
                 'error' => 'true',
-                'message' => __('Error occurred on shipping Order Id %1 found.', $orderId)
+                'message' => __('Error occurred on shipping Order Id %1.', $orderId)
             ];
         } catch (NoSuchEntityException $e) {
             $this->logger->error($e->getMessage());
@@ -115,7 +115,7 @@ class Deliver  extends Action implements HttpPostActionInterface
         } catch (\Exception $e) {
             $response = [
                 'error' => 'true',
-                'message' => $e->getMessage()
+                'message' => $e->getTraceAsString()
             ];
         }
 

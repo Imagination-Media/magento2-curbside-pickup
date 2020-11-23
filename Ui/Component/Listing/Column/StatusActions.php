@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\CurbsidePickup\Ui\Component\Listing\Column;
 
-use ImaginationMedia\CurbsidePickup\Model\Config\Source\Status;
 use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
 use Magento\Backend\Block\Widget\Button;
 use Magento\Framework\UrlInterface;
@@ -41,17 +40,11 @@ class StatusActions extends Column
     protected $layout;
 
     /**
-     * @var Status
-     */
-    private $status;
-
-    /**
      * StatusActions constructor.
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
      * @param UrlInterface $urlBuilder
      * @param LayoutInterface $layout
-     * @param Status $status
      * @param array $components
      * @param array $data
      */
@@ -60,13 +53,11 @@ class StatusActions extends Column
         UiComponentFactory $uiComponentFactory,
         UrlInterface $urlBuilder,
         LayoutInterface $layout,
-        Status $status,
         array $components = [],
         array $data = []
     ) {
         $this->urlBuilder = $urlBuilder;
         $this->layout = $layout;
-        $this->status = $status;
 
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
@@ -82,14 +73,18 @@ class StatusActions extends Column
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
                 if (isset($item['entity_id']) && isset($item['status'])) {
+                    $statusLabel = $this->getLabelByStatus($item['status']);
+                    if ($statusLabel === null) {
+                        continue;
+                    }
                     $item[$this->getData('name')] = $this->layout->createBlock(
                         Button::class,
                         'order_status_action_btn_' . $item['entity_id'],
                         [
                             'data' => [
-                                'label' => __($this->getLabelByStatus($item['status'])),
+                                'label' => __($statusLabel),
                                 'type' => 'button',
-                            //    'disabled' => $this->isActionEnabled($item['status']),
+                                'disabled' => $this->isActionEnabled($item['status']),
                                 'id' => 'order-' .  $item['entity_id'],
                                 'class' => 'order-status-action',
                                 'onclick' => 'curbsidePickup.triggerOrderStatusChange(
@@ -114,7 +109,7 @@ class StatusActions extends Column
     {
         if ($status === OrderStatus::STATUS_ACCEPTED) {
             return $this->getReadyActionUrl();
-        } elseif ($status === OrderStatus::STATUS_READY_TO_PICK_UP) {
+        } elseif ($status === OrderStatus::STATUS_CUSTOMER_READY) {
             return $this->getDeliverActionUrl();
         }
         return $this->getAcceptActionUrl();
@@ -122,16 +117,22 @@ class StatusActions extends Column
 
     /**
      * @param string $status
-     * @return string
+     * @return string|null
      */
-    private function getLabelByStatus(string $status): string
+    private function getLabelByStatus(string $status): ?string
     {
-        if ($status === Order::STATE_COMPLETE) {
-            return OrderStatus::STATUS_COMPLETE_LABEL;
+        if ($status === OrderStatus::STATUS_ACCEPTED) {
+            return  OrderStatus::STATUS_READY_TO_PICK_UP_GRID_ACTION_LABEL;
+        } elseif ($status === OrderStatus::STATUS_READY_TO_PICK_UP) {
+            return  OrderStatus::STATUS_WAITING_USER_LABEL;
+        } elseif ($status === OrderStatus::STATUS_CUSTOMER_READY) {
+            return  OrderStatus::STATUS_CUSTOMER_READY_GRID_ACTION_LABEL;
+        } elseif ($status === Order::STATE_COMPLETE) {
+            return  OrderStatus::STATUS_COMPLETE_LABEL;
+        } elseif (in_array($status, [Order::STATE_NEW, OrderStatus::STATUS_PENDING])) {
+            return OrderStatus::STATUS_ACCEPTED_GRID_ACTION_LABEL;
         }
-
-        $options = $this->getGridStatusOptions();
-        return isset($options[$status]) ? $options[$status] : OrderStatus::STATUS_ACCEPTED_GRID_ACTION_LABEL;
+        return null;
     }
 
     /**
@@ -170,23 +171,11 @@ class StatusActions extends Column
      */
     private function isActionEnabled(string $status): bool
     {
-        $curbsideStatuses = array_keys($this->getStatusOptions());
-        return $status === Order::STATE_COMPLETE || !in_array($status, $curbsideStatuses);
-    }
-
-    /**
-     * @return array
-     */
-    private function getGridStatusOptions(): array
-    {
-        return $this->status->getGridStatusOptions();
-    }
-
-    /**
-     * @return array
-     */
-    private function getStatusOptions(): array
-    {
-        return $this->status->getOptions();
+        return in_array($status, [
+           Order::STATE_NEW,
+           OrderStatus::STATUS_ACCEPTED,
+           OrderStatus::STATUS_CUSTOMER_READY,
+           OrderStatus::STATUS_PENDING
+        ]);
     }
 }

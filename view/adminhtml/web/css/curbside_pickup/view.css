@@ -12,33 +12,32 @@
  */
 -->
 
-td.curbside-accepted {
+span.curbside-accepted {
     background-color: var(--accepted);
-    border: 1px solid #000000;
 }
 
-td.curbside-ready {
+span.curbside-ready {
     background-color: var(--pickup-ready);
-    border: 1px solid #000000;
 }
 
-td.curbside-customer-ready {
+span.curbside-customer-ready {
     background-color: var(--customer-ready);
-    border: 1px solid #000000;
 }
 
-td.pending {
+span.pending {
     background-color: var(--pending);
-    border: 1px solid #000000;
 }
 
-td.delivered {
+span.delivered {
     background-color: var(--delivered);
-    border: 1px solid #000000;
 }
 
 .curbside_data_label {
     font-weight: 800;
+}
+
+.curbside-status {
+    padding: 3px;
 }
 
 .curbside_data_list li {

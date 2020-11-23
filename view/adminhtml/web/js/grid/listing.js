@@ -19,22 +19,6 @@ define([
     return Listing.extend({
         defaults: {
             template: 'ImaginationMedia_CurbsidePickup/grid/listing'
-        },
-
-        /**
-         * @param {Object} order
-         * @returns {String}
-         */
-        getColorClassByCurbsideOrderStatus: function (order) {
-
-            if (order.status === 'curbside_accepted') {
-                return 'curbside-accepted';
-            } else if (order.status === 'curbside_ready') {
-                return 'curbside-ready';
-            } else if (order.status === 'curbside_customer_ready') {
-                return 'curbside-customer-ready';
-            }
-            return 'pending';
         }
     });
 });

@@ -15,13 +15,16 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="styles"/>
+
     <head>
         <css src="ImaginationMedia_CurbsidePickup::css/curbside_pickup/modal.css"/>
     </head>
     <body>
         <block name="curbsidepickup.modal" output="1" template="ImaginationMedia_CurbsidePickup::order/modal.phtml">
             <arguments>
-                <argument name="viewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderModal</argument>
+                <argument name="modalViewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderModal</argument>
+                <argument name="orderViewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\OrderView</argument>
+                <argument name="colorViewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderStatusColors</argument>
             </arguments>
             <block class="Magento\Sales\Block\Adminhtml\Order\View\Items" name="order_items" template="Magento_Sales::order/view/items.phtml">
                 <arguments>

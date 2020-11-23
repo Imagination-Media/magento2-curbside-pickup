@@ -15,19 +15,18 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\CurbsidePickup\Ui\Component\Listing\Column;
 
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
+use ImaginationMedia\CurbsidePickup\ViewModel\OrderView;
 
 /**
  * Render Curbside JSON Data as Formatted List
  */
 class CurbsideData extends Column
 {
-
     /**
      * @var UrlInterface
      */
@@ -39,15 +38,15 @@ class CurbsideData extends Column
     protected $layout;
 
     /**
-     * @var SerializerInterface
+     * @var OrderView
      */
-    private $json;
+    private OrderView $orderView;
 
     /**
      * CurbsideData constructor.
      *
      * @param ContextInterface $context
-     * @param SerializerInterface $json
+     * @param OrderView $orderView
      * @param UiComponentFactory $uiComponentFactory
      * @param UrlInterface $urlBuilder
      * @param array $components
@@ -55,7 +54,7 @@ class CurbsideData extends Column
      */
     public function __construct(
         ContextInterface $context,
-        SerializerInterface $json,
+        OrderView $orderView,
         UiComponentFactory $uiComponentFactory,
         UrlInterface $urlBuilder,
         array $components = [],
@@ -64,7 +63,7 @@ class CurbsideData extends Column
         $this->urlBuilder = $urlBuilder;
 
         parent::__construct($context, $uiComponentFactory, $components, $data);
-        $this->json = $json;
+        $this->orderView = $orderView;
     }
 
     /**
@@ -78,48 +77,10 @@ class CurbsideData extends Column
                 if (!isset($item['curbside_data']) || $item['curbside_data'] === null) {
                     continue;
                 }
-                $curbsideData = $this->json->unserialize($item['curbside_data']);
-                $item[$this->getData('name')] = $this->formatToList($curbsideData);
+                $item[$this->getData('name')] = $this->orderView->formatToHtmlList($item['curbside_data']);
             }
         }
 
         return $dataSource;
-    }
-
-    /**
-     * @param array $curbsideData
-     * @return string
-     */
-    private function formatToList(array $curbsideData): string
-    {
-        if (empty($curbsideData)) {
-            return '';
-        }
-
-        $curbsideDataList = '<ul>';
-        foreach ($curbsideData as $field => $item) {
-            if (!$item) {
-                continue;
-            }
-            if (is_array($item) && !empty($item)) {
-                $curbsideDataList .= '<li>';
-                $this->formatToList($item);
-                $curbsideDataList .= '</li>';
-            } else {
-                $curbsideDataList .= '<li>' . $this->formatToLabel($field) . ': ' . $item . '</li>';
-            }
-        }
-        $curbsideDataList .= "</ul>";
-
-        return $curbsideDataList;
-    }
-
-    /**
-     * @param string $key
-     * @return string
-     */
-    private function formatToLabel(string $key): string
-    {
-        return ucfirst(str_replace('_', ' ', $key));
     }
 }

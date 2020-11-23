@@ -17,7 +17,7 @@ namespace ImaginationMedia\CurbsidePickup\Controller\Order;
 
 use ImaginationMedia\CurbsidePickup\Action\CurbsideOrderInterface;
 use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
-use Klarna\Core\Api\OrderRepositoryInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
@@ -30,6 +30,7 @@ use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Phrase;
 use Magento\Sales\Api\Data\OrderInterface;
+use ImaginationMedia\CurbsidePickup\Helper\Data as CurbsideHelper;
 use Psr\Log\LoggerInterface;
 
 class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostActionInterface
@@ -55,11 +56,17 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
     private CurbsideOrderInterface $curbsideOrderService;
 
     /**
+     * @var CurbsideHelper
+     */
+    private CurbsideHelper $curbsideHelper;
+
+    /**
      * PickupPost constructor.
      * @param CurbsideOrderInterface $curbsideOrderService
      * @param OrderRepositoryInterface $orderRepository
      * @param Validator $formKeyValidator
      * @param LoggerInterface $logger
+     * @param CurbsideHelper $curbsideHelper
      * @param Context $context
      */
     public function __construct(
@@ -67,6 +74,7 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
         OrderRepositoryInterface $orderRepository,
         Validator $formKeyValidator,
         LoggerInterface $logger,
+        CurbsideHelper $curbsideHelper,
         Context $context
     ) {
         parent::__construct($context);
@@ -74,6 +82,7 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
         $this->orderRepository = $orderRepository;
         $this->logger = $logger;
         $this->curbsideOrderService = $curbsideOrderService;
+        $this->curbsideHelper = $curbsideHelper;
     }
 
     /**
@@ -81,7 +90,7 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
      */
     public function execute()
     {
-        $postData = $this->getRequest()->getPost();
+        $postData = $this->getRequest()->getParams();
         $orderId = $postData['order_id'];
         if (!$orderId) {
             $this->messageManager->addErrorMessage(__('No Id provided for load.'));
@@ -91,13 +100,21 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
         if ($validFormKey && $this->getRequest()->isPost()) {
             try {
                 /** @var OrderInterface $order */
-                $order = $this->orderRepository->getById($orderId);
+                $order = $this->orderRepository->get($orderId);
                 $order = $this->curbsideOrderService->saveCurbsideData($order, $postData);
-                $this->curbsideOrderService->updateStatus(
-                    OrderStatus::STATUS_CUSTOMER_READY,
-                    $order,
-                    'Customer ready to pickup order'
-                );
+
+                if ($postData['is_scheduled_pickup']
+                    && $this->curbsideHelper->isScheduledPickupEnabled($order->getStoreId())
+                ) {
+                    $this->curbsideOrderService->updateStatus(
+                        OrderStatus::STATUS_CUSTOMER_READY,
+                        $order,
+                        'Customer ready to pickup order'
+                    );
+                    $this->messageManager->addSuccessMessage(__('Pickup has been scheduled successfully.'));
+                } else {
+                    $this->messageManager->addSuccessMessage(__('Pickup Info has been saved successfully.'));
+                }
             } catch (\Exception $e) {
                 $this->logger->critical($e->getTraceAsString());
                 $this->messageManager->addExceptionMessage($e, __('We can\'t save the Curbside Data.'));
@@ -106,7 +123,7 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
 
         /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
-        $resultRedirect->setPath('*/*/edit/order_id/' . $orderId);
+        $resultRedirect->setPath('*/*/view/order_id/' . $orderId);
         return $resultRedirect;
     }
 
