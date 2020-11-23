@@ -8,6 +8,7 @@
  *
  * @package ImaginationMedia\CurbsidePickup
  * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -31,14 +32,22 @@ use Magento\Sales\Model\ResourceModel\Order\StatusFactory as StatusResourceFacto
  */
 class OrderStatus implements DataPatchInterface
 {
-    public const STATUS_ACCEPTED       = "curbside_accepted";
-    public const STATUS_ACCEPTED_LABEL = "Order In Progress";
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
 
-    public const STATUS_READY_TO_PICK_UP       = "curbside_ready";
-    public const STATUS_READY_TO_PICK_UP_LABEL = "Ready to be picked up";
+    public const STATUS_ACCEPTED       = 'curbside_accepted';
+    public const STATUS_ACCEPTED_LABEL = 'Order In Progress';
+    public const STATUS_ACCEPTED_GRID_ACTION_LABEL = 'Accept';
 
-    public const STATUS_CUSTOMER_READY       = "curbside_customer_ready";
-    public const STATUS_CUSTOMER_READY_LABEL = "Customer is ready to pick-up";
+    public const STATUS_READY_TO_PICK_UP       = 'curbside_ready';
+    public const STATUS_READY_TO_PICK_UP_LABEL = 'Ready to be picked up';
+    public const STATUS_READY_TO_PICK_UP_GRID_ACTION_LABEL = 'Mark As Ready';
+
+    public const STATUS_CUSTOMER_READY       = 'curbside_customer_ready';
+    public const STATUS_CUSTOMER_READY_LABEL = 'Customer is ready to pick-up';
+    public const STATUS_CUSTOMER_READY_GRID_ACTION_LABEL = 'Deliver';
+
+    public const STATUS_COMPLETE_LABEL = 'Delivered';
 
     /**
      * @var StatusFactory
