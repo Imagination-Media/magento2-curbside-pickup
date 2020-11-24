@@ -84,7 +84,7 @@ class StatusActions extends Column
                             'data' => [
                                 'label' => __($statusLabel),
                                 'type' => 'button',
-                                'disabled' => $this->isActionEnabled($item['status']),
+                                'disabled' => !$this->isActionEnabled($item['status']),
                                 'id' => 'order-' .  $item['entity_id'],
                                 'class' => 'order-status-action',
                                 'onclick' => 'curbsidePickup.triggerOrderStatusChange(
