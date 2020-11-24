@@ -24,7 +24,7 @@ class Colors
 
     public const ORDER_READY_TO_PICKUP_HEX = '#aafdaa';
 
-    public const ORDER_CUSTOMER_READY_HEX = '#4bd033';
+    public const ORDER_CUSTOMER_READY_HEX = '#87f373';
 
     public const ORDER_DELIVERED_HEX = '#b9e7fd';
 
