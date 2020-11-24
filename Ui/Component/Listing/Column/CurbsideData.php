@@ -40,7 +40,7 @@ class CurbsideData extends Column
     /**
      * @var OrderView
      */
-    private OrderView $orderView;
+    private $orderView;
 
     /**
      * CurbsideData constructor.

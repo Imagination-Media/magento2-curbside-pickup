@@ -192,19 +192,21 @@ class CurbsideOrder implements CurbsideOrderInterface
                 $deliveryTime = new \DateTime($data['curbside_delivery_time']);
                 $order->setCurbsideDeliveryTime($deliveryTime->format('Y-m-d H:i:s'));
             }
-            $existingData = $this->json->unserialize($order->setCurbsideData());
-            $dataJson = $this->json->serialize(array_merge_recursive(
-                array_filter($data, fn ($key) =>
-                    in_array($key, [
+            $existingData = $this->json->unserialize($order->getCurbsideData());
+            foreach ($data as $key => $value) {
+                if ($value !== null && $value !=='' && in_array($key, [
                         'car_model',
                         'car_plate',
                         'car_color',
                         'note',
                         'pickup_location_name',
                         'parking_spot'
-                    ]),
-                ARRAY_FILTER_USE_KEY
-            ), $existingData));
+                    ])
+                ) {
+                    $existingData[$key]= $value;
+                }
+            }
+            $dataJson = $this->json->serialize($existingData);
             $order->setCurbsideData($dataJson);
 
             /** @var Order $order */

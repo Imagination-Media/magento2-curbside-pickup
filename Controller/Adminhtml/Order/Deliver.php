@@ -115,7 +115,7 @@ class Deliver  extends Action implements HttpPostActionInterface
         } catch (\Exception $e) {
             $response = [
                 'error' => 'true',
-                'message' => $e->getTraceAsString()
+                'message' => $e->getMessage()
             ];
         }
 
