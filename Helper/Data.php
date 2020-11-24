@@ -29,7 +29,7 @@ class Data extends AbstractHelper
     private const XML_IS_CURBSIDE_PICKUP = 'carriers/instore/curbside/active';
     private const XML_IS_SCHEDULED_PICKUP = 'carriers/instore/curbside/scheduled_pickup';
     private const XML_PICKUP_THRESHOLD = 'carriers/instore/curbside/threshold';
-
+ 
     /**
      * Email Templates
      */
