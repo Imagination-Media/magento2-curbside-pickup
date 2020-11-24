@@ -14,7 +14,7 @@
 
 <!--@subject {{trans "%store_name order is ready for Pick Up" store_name=$store.frontend_name}} @-->
 <!--@vars {
-"var this.getUrl($store,'curbside/order/view',[order_id:$order.increment_id,_nosid:1])":"Curbside Order URL",
+"var this.getUrl($store,'curbside/order/view',[order_id:$order.id,_nosid:1])":"Curbside Order URL",
 "var order_data.customer_name":"Customer Name",
 "var comment|escape|nl2br":"Order Comment",
 "var order.increment_id":"Order Id",
