@@ -43,7 +43,7 @@ class SendDeliveryReminder
     /**
      * @var EmailNotificationInterface
      */
-    private EmailNotificationInterface $emailNotification;
+    private $emailNotification;
 
     /**
      * @param EmailNotificationInterface $emailNotification
