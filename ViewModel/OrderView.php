@@ -177,7 +177,7 @@ class OrderView implements ArgumentInterface
             }
             if (is_array($item) && !empty($item)) {
                 $curbsideDataList .= '<li>';
-                $this->formatToList($item);
+                $this->formatToHtmlList($item);
                 $curbsideDataList .= '</li>';
             } else {
                 $curbsideDataList .= '<li><span class="curbside_data_label">' . $this->formatToLabel($field) . '</span>: ' . $item . '</li>';
