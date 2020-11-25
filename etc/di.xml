@@ -124,4 +124,11 @@
     <type name="ImaginationMedia\CurbsidePickup\Controller\Order\PickupPost">
         <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
     </type>
+
+    <!-- Make Frontend URL access from Admin URL-->
+    <type name="ImaginationMedia\CurbsidePickup\Model\Email\CurbsideOrderSender">
+        <arguments>
+            <argument name="url" xsi:type="object">Magento\Framework\Url</argument>
+        </arguments>
+    </type> 
 </config>

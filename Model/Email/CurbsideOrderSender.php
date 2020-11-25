@@ -24,6 +24,7 @@ use Magento\Sales\Model\Order\Email\Sender;
 use Magento\Sales\Model\Order\Email\SenderBuilder;
 use Magento\Sales\Model\Order\Email\SenderBuilderFactory;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\UrlInterface;
 
 class CurbsideOrderSender extends Sender
 {
@@ -50,12 +51,18 @@ class CurbsideOrderSender extends Sender
     private $emailTemplateId;
 
     /**
+     * @var UrlInterface
+     */
+    private UrlInterface $url;
+
+    /**
      * @param Template $templateContainer
      * @param CurbsideOrderIdentity $identityContainer
      * @param SenderBuilderFactory $senderBuilderFactory
      * @param LoggerInterface $logger
      * @param Renderer $addressRenderer
      * @param ManagerInterface $eventManager
+     * @param UrlInterface $url
      * @param string $emailTemplateId
      */
     public function __construct(
@@ -65,12 +72,14 @@ class CurbsideOrderSender extends Sender
         LoggerInterface $logger,
         Renderer $addressRenderer,
         ManagerInterface $eventManager,
+        UrlInterface $url,
         string $emailTemplateId
     ) {
         parent::__construct($templateContainer, $identityContainer, $senderBuilderFactory, $logger, $addressRenderer);
         $this->addressRenderer = $addressRenderer;
         $this->eventManager = $eventManager;
         $this->emailTemplateId = $emailTemplateId;
+        $this->url = $url;
     }
 
     /**
@@ -92,6 +101,8 @@ class CurbsideOrderSender extends Sender
             'formattedShippingAddress' => $this->getFormattedShippingAddress($order),
             'formattedBillingAddress' => $this->getFormattedBillingAddress($order),
             'order_data' => [
+                'order_url' => $this->getOrderUrl($order),
+                'pickup_url' =>  $this->getPickupUrl($order),
                 'customer_name' => $order->getCustomerName(),
                 'frontend_status_label' => $order->getFrontendStatusLabel()
             ]
@@ -138,5 +149,23 @@ class CurbsideOrderSender extends Sender
     private function getEmailTemplateId(): string
     {
         return $this->emailTemplateId;
+    }
+
+    /**
+     * @param Order $order
+     * @return string
+     */
+    private function getPickupUrl(Order $order): string
+    {
+        return $this->url->getUrl('curbside/order/pickup',  ['order_id' => $order->getEntityId()]);
+    }
+
+    /**
+     * @param Order $order
+     * @return string
+     */
+    private function getOrderUrl(Order $order): string
+    {
+        return $this->url->getUrl('curbside/order/view', ['order_id' => $order->getEntityId()]);
     }
 }

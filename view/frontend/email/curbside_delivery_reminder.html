@@ -14,7 +14,7 @@
 
 <!--@subject {{trans "Delivery reminder for %store_name order" store_name=$store.frontend_name}} @-->
 <!--@vars {
-"var this.getUrl($store,'curbside/order/view',[order_id:$order.id,_nosid:1])":"Curbside Order URL",
+"var order_data.pickup_url":"Curbside Pick Up URL",
 "var order_data.customer_name":"Customer Name",
 "var order.increment_id":"Order Id",
 "var order_data.frontend_status_label":"Order Status",
@@ -38,7 +38,7 @@
                     curbside_delivery_time=$order_data.curbside_delivery_time
                 |raw}}
             </p>
-            <p>{{trans 'Be free to inform us <a href="%order_url">here</a>' order_url=$this.getUrl($store,'curbside/order/pickup/',[order_id:$order.id,_nosid:1]) |raw}} {{trans 'once when on location.'}}</p>
+            <p>{{trans 'Be free to inform us <a href="%order_url">here</a>' order_url=$order_data.pickup_url |raw}} {{trans 'once when on location.'}}</p>
             <p>
                 {{depend $order_data.pickup_location_name}}
                 {{trans 'Pick up Store Location: <span class="no-link">%pickup_location_name</span>.' pickup_location_name=$order_data.pickup_location_name |raw}}
