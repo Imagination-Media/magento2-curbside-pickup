@@ -32,6 +32,7 @@
                     <field id="scheduled_pickup" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                         <label>Scheduled Pickup</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/instore_curbside/scheduledpickup</config_path>
                         <comment>If Enabled it will send email reminder to customer 1 hour before delivery time</comment>
                     </field>
                 </group>

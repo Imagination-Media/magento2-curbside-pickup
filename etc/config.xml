@@ -25,13 +25,11 @@
             </curbside_order>
         </sales_email>
         <carriers>
-            <instore>
-                <curbside>
-                    <active>0</active>
-                    <threshold>6</threshold>
-                    <scheduled_pickup>1</scheduled_pickup>
-                </curbside>
-            </instore>
+            <instore_curbside>
+                <active>0</active>
+                <threshold>6</threshold>
+                <scheduledpickup>1</scheduledpickup>
+            </instore_curbside>
         </carriers>
     </default>
 </config>
