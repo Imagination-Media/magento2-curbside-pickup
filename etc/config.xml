@@ -24,5 +24,14 @@
                 <copy_method>bcc</copy_method>
             </curbside_order>
         </sales_email>
+        <carriers>
+            <instore>
+                <curbside>
+                    <active>0</active>
+                    <threshold>6</threshold>
+                    <scheduled_pickup>1</scheduled_pickup>
+                </curbside>
+            </instore>
+        </carriers>
     </default>
 </config>
