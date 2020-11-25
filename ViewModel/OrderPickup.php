@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace ImaginationMedia\CurbsidePickup\ViewModel;
 
 use ImaginationMedia\CurbsidePickup\Model\Mapper\CurbsideDataFactory;
+use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\DataObject;
@@ -108,15 +109,24 @@ class OrderPickup implements ArgumentInterface
     public function getPickupScheduledTime(): string
     {
         $deliveryTime = new \DateTime($this->getOrder()->getCurbsideDeliveryTime());
-        return $deliveryTime->format('m/d/y H:i A');
+        return $deliveryTime->format('m/d/y h:i A');
     }
 
     /**
      * @return bool
      */
-    public function isPickupAvailable(): bool
+    public function isCustomerReadyToPickUp(): bool
     {
-        return strtotime('now') > strtotime($this->getOrder()->getCurbsideDeliveryTime());
+        return $this->getOrder()->getStatus() === OrderStatus::STATUS_CUSTOMER_READY;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrderReadyToPickUp(): bool
+    {
+        return $this->getOrder()->getStatus() === OrderStatus::STATUS_READY_TO_PICK_UP
+            && strtotime('now') > strtotime($this->getOrder()->getCurbsideDeliveryTime());
     }
 
     /**
@@ -124,12 +134,12 @@ class OrderPickup implements ArgumentInterface
      */
     public function getPickupButtonTitle(): ?string
     {
-        if ($this->isPickupAvailable()) {
+        if ($this->isOrderReadyToPickUp() && !$this->isScheduledPickupActive()) {
             return 'I\'m here';
         } elseif ($this->isScheduledPickupActive()) {
             return 'Schedule Pick Up';
         }
-        return null;
+        return 'Save';
     }
 
     /**
@@ -154,7 +164,7 @@ class OrderPickup implements ArgumentInterface
             $thresholdTimeSpan = new \DateInterval('PT' . $deliveryThreshold . 'H');
             $deliveryDate = $deliveryDate->add($thresholdTimeSpan);
         }
-        return $deliveryDate->format('m/d/y H:i');
+        return $deliveryDate->format('m/d/y h:i');
     }
 
     /**
@@ -173,7 +183,7 @@ class OrderPickup implements ArgumentInterface
      */
     public function isScheduledPickupActive(): bool
     {
-        return $this->helper->isScheduledPickupEnabled($this->getStore());
+        return $this->helper->isScheduledPickupEnabled();
     }
 
     /**

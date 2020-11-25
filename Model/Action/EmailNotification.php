@@ -134,7 +134,7 @@ class EmailNotification implements EmailNotificationInterface
      */
     private function getDeliveryTime(OrderInterface $order): string
     {
-        return (new \DateTime($order->getCurbsideDeliveryTime()))->format('m/d/y H:i A');
+        return (new \DateTime($order->getCurbsideDeliveryTime()))->format('m/d/y h:i A');
     }
 
     /**

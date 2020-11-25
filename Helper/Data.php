@@ -27,9 +27,9 @@ class Data extends AbstractHelper
      * Configuration paths
      */
     private const XML_IS_CURBSIDE_PICKUP = 'carriers/instore/curbside/active';
-    private const XML_IS_SCHEDULED_PICKUP = 'carriers/instore/curbside/scheduled_pickup';
-    private const XML_PICKUP_THRESHOLD = 'carriers/instore/curbside/threshold';
- 
+    private const XML_IS_SCHEDULED_PICKUP = 'carriers/instore_curbside/scheduledpickup';
+    private const XML_PICKUP_THRESHOLD = 'carriers/instore_curbside/threshold';
+
     /**
      * Email Templates
      */
@@ -62,8 +62,7 @@ class Data extends AbstractHelper
     {
         return $this->scopeConfig->isSetFlag(
             self::XML_IS_SCHEDULED_PICKUP,
-            ScopeInterface::SCOPE_STORE,
-            $store
+            ScopeInterface::SCOPE_STORE
         );
     }
 
@@ -95,9 +94,9 @@ class Data extends AbstractHelper
 
     /**
      * @param null|mixed $store
-     * @return int
+     * @return string
      */
-    public function getPickupThreshold($store = null): ?int
+    public function getPickupThreshold($store = null): ?string
     {
         return $this->scopeConfig->getValue(
             self::XML_PICKUP_THRESHOLD,
