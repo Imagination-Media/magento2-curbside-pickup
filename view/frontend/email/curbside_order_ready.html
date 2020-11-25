@@ -14,8 +14,8 @@
 
 <!--@subject {{trans "%store_name order is ready for Pick Up" store_name=$store.frontend_name}} @-->
 <!--@vars {
-"var this.getUrl($store,'curbside/order/view',[order_id:$order.id,_nosid:1])":"Curbside Order URL",
 "var order_data.customer_name":"Customer Name",
+"var order_data.pickup_url":"Curbside Pickup URL",
 "var comment|escape|nl2br":"Order Comment",
 "var order.increment_id":"Order Id",
 "var order_data.frontend_status_label":"Order Status",
@@ -37,7 +37,7 @@
                     order_status=$order_data.frontend_status_label
                 |raw}}
             </p>
-            <p>{{trans 'You can track your order <a href="%order_url">here</a>.' order_url=$this.getUrl($store,'curbside/order/pickup/',[order_id:$order.id,_nosid:1]) |raw}}</p>
+            <p>{{trans 'You can track your order <a href="%order_url">here</a>.' order_url=$order_data.pickup_url |raw}}</p>
             <p>
                 {{trans 'If you have questions about your order, you can email us at <a href="mailto:%store_email">%store_email</a>' store_email=$store_email |raw}}{{depend store_phone}} {{trans 'or call us at <a href="tel:%store_phone">%store_phone</a>' store_phone=$store_phone |raw}}{{/depend}}.
                 {{depend store_hours}}

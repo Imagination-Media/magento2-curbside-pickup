@@ -117,6 +117,7 @@ class Ready extends Action implements HttpPostActionInterface
                 'message' => __('No Order with Id %1 found.', $orderId)
             ];
         } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage());
             $response = [
                 'error' => 'true',
                 'message' => $e->getTraceAsString()

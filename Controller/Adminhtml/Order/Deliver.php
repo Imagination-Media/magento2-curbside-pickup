@@ -113,6 +113,7 @@ class Deliver  extends Action implements HttpPostActionInterface
                 'message' => __('No Order with Id %1 found.', $orderId)
             ];
         } catch (\Exception $e) {
+            $this->logger->critical($e->getTraceAsString());
             $response = [
                 'error' => 'true',
                 'message' => $e->getMessage()

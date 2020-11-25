@@ -13,6 +13,7 @@
 
 namespace ImaginationMedia\CurbsidePickup\Plugin\Magento\QuoteApi;
 
+use ImaginationMedia\CurbsidePickup\Helper\Data;
 use ImaginationMedia\CurbsidePickup\Rewrite\Magento\Quote\Api\Data\AddressExtension;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -27,12 +28,17 @@ class CartRepositoryInterfacePlugin
     /**
      * @var SerializerInterface
      */
-    private SerializerInterface $json;
+    private $json;
 
     /**
      * @var SourceRepositoryInterface
      */
-    private SourceRepositoryInterface $sourceRepository;
+    private $sourceRepository;
+
+    /**
+     * @var Data
+     */
+    private $helper;
 
     /**
      * CartRepositoryInterfacePlugin constructor.
@@ -41,10 +47,12 @@ class CartRepositoryInterfacePlugin
      */
     public function __construct(
         SourceRepositoryInterface $sourceRepository,
-        SerializerInterface $json
+        SerializerInterface $json,
+        Data $helper
     ) {
         $this->json = $json;
         $this->sourceRepository = $sourceRepository;
+        $this->helper = $helper;
     }
 
     /**
@@ -82,7 +90,13 @@ class CartRepositoryInterfacePlugin
                     $inventorySourceName = $this->getSourceNameByCode($addressExtensionAttributes->getPickupLocationCode());
                     $cart->setCurbsideData($this->json->serialize(['pickup_location_name' => $inventorySourceName]));
                 }
-                $cart->setCurbsideDeliveryTime((new \DateTime('now'))->format('Y-m-d H:i:s'));
+                $pickUpThreshold = $this->helper->getPickupThreshold();
+                $deliveryTime = (new \DateTime('now'));
+                if ($pickUpThreshold !== null && (int)$pickUpThreshold > 0) {
+                    $pickUpThresholdIntervalInHours = new \DateInterval('PT ' . $pickUpThreshold . 'H');
+                    $deliveryTime->add($pickUpThresholdIntervalInHours);
+                }
+                $cart->setCurbsideDeliveryTime($deliveryTime->format('Y-m-d H:i:s'));
             }
         }
         return [$cart];
