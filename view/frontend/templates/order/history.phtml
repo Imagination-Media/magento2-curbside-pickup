@@ -46,7 +46,7 @@ $_curbsideOrders = $historyViewModel->filterCurbsideOrders($_orders);
                 <?php foreach ($_orders as $_order) : ?>
                 <?php    /** @var Magento\Sales\Model\Order $_order */
                         $curbsideData = $historyViewModel->getCurbsideData($_order);
-                        $curbsideDeliveryTime = (new DateTime($curbsideData->getCurbsideDeliveryTime()))->format('m/d/y H:i A');
+                        $curbsideDeliveryTime = (new DateTime($curbsideData->getCurbsideDeliveryTime()))->format('m/d/y h:i A');
                     ?>
                     <tr>
                         <td data-th="<?= $escaper->escapeHtml(__('Order #')) ?>" class="col id"><?= $escaper->escapeHtml($_order->getRealOrderId()) ?></td>
