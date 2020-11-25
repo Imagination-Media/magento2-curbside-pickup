@@ -104,10 +104,13 @@ class OrderPickup implements ArgumentInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPickupScheduledTime(): string
+    public function getPickupScheduledTime(): ?string
     {
+        if (!$this->getOrder()->getCurbsideDeliveryTime()) {
+            return null;
+        }
         $deliveryTime = new \DateTime($this->getOrder()->getCurbsideDeliveryTime());
         return $deliveryTime->format('m/d/y h:i A');
     }
@@ -134,12 +137,10 @@ class OrderPickup implements ArgumentInterface
      */
     public function getPickupButtonTitle(): ?string
     {
-        if ($this->isOrderReadyToPickUp() && !$this->isScheduledPickupActive()) {
-            return 'I\'m here';
-        } elseif ($this->isScheduledPickupActive()) {
+       if ($this->isScheduledPickupActive()) {
             return 'Schedule Pick Up';
         }
-        return 'Save';
+        return 'I\'m here';
     }
 
     /**
@@ -183,7 +184,7 @@ class OrderPickup implements ArgumentInterface
      */
     public function isScheduledPickupActive(): bool
     {
-        return $this->helper->isScheduledPickupEnabled();
+        return (bool)$this->helper->isScheduledPickupEnabled();
     }
 
     /**
