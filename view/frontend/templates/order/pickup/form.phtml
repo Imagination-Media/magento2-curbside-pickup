@@ -13,8 +13,8 @@
 
 /** @var Template $block */
 
+use ImaginationMedia\CurbsidePickup\Model\Mapper\CurbsideData;
 use ImaginationMedia\CurbsidePickup\ViewModel\OrderPickup;
-use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
@@ -28,7 +28,7 @@ use Magento\Framework\View\Helper\SecureHtmlRenderer;
 /** @var OrderPickup $pickupViewModel */
 $pickupViewModel = $block->getData('pickupViewModel');
 
-/** @var DataObject $curbsideData */
+/** @var CurbsideData $curbsideData */
 $curbsideData = $pickupViewModel->getCurbsideData();
 $isPickupScheduledForStore = $pickupViewModel->isScheduledPickupActive();
 $editMode = $pickupViewModel->isCustomerReadyToPickUp() || $pickupViewModel->isOrderPickedUp() ? false : true;
@@ -36,7 +36,7 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
 ?>
 
 <form class="form form-edit-curbside-pickup"
-      action="<?= $escaper->escapeUrl($block->getUrl('curbside/order/pickupPost')) ?>"
+      action="<?= $escaper->escapeUrl($block->getUrl('curbside/order/pickupPost')) . $pickupViewModel->getPickupAccessTokenQueryString() ?>"
       method="post" id="form-validate"
       enctype="multipart/form-data"
       autocomplete="off">
@@ -158,14 +158,6 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                         />
                     </div>
                 </div>
-                <div class="field order_id" data-container="order-id">
-                    <div class="control">
-                        <input type="hidden"
-                               name="is_scheduled_pickup"
-                               value="<?= $isPickupScheduledForStore ? '1' : '0' ?>"
-                        />
-                    </div>
-                </div>
             </div>
         <?php endif; ?>
 
@@ -203,11 +195,11 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
         </div>
     </fieldset>
 
-    <?php if ($pickupViewModel->isCustomerReadyToPickUp() && !$pickupViewModel->isOrderPickedUp()): ?>
+    <?php if ($pickupViewModel->isOrderScheduledForPickup() && !$pickupViewModel->isOrderPickedUp()): ?>
         <p class="pickup-availability"><?= $escaper->escapeHtml(__('Order scheduled for pick up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
     <?php elseif ($pickupViewModel->isOrderPickedUp()): ?>
         <p class="picked-up"><?= $escaper->escapeHtml(__('Order completed/delivered up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
-    <?php else: ?>
+    <?php elseif (!$pickupViewModel->isCustomerReadyToPickUp()): ?>
         <div class="actions-toolbar">
             <div class="primary">
                 <button type="submit" class="action pickup-action primary" title="<?= $escaper->escapeHtmlAttr(__($actionButtonTitle)) ?>">
@@ -215,6 +207,16 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                 </button>
             </div>
         </div>
+        <?php if ($editMode): ?>
+            <div class="field scheduled_pickup" data-container="scheduled-pickup-action">
+                <div class="control">
+                    <input type="hidden"
+                           name="scheduled_pickup"
+                           value="<?= $curbsideData->getScheduledPickup() ?>"
+                    />
+                </div>
+            </div>
+        <?php endif; ?>
     <?php endif; ?>
 </form>
 

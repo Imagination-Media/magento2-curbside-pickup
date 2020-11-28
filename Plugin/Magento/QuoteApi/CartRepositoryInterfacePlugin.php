@@ -25,25 +25,28 @@ use Magento\Quote\Model\Quote\Address;
 
 class CartRepositoryInterfacePlugin
 {
+    private const CURBSIDE_ACTIVE = '1';
+
     /**
      * @var SerializerInterface
      */
-    private $json;
+    private SerializerInterface $json;
 
     /**
      * @var SourceRepositoryInterface
      */
-    private $sourceRepository;
+    private SourceRepositoryInterface $sourceRepository;
 
     /**
      * @var Data
      */
-    private $helper;
+    private Data $helper;
 
     /**
      * CartRepositoryInterfacePlugin constructor.
      * @param SourceRepositoryInterface $sourceRepository
      * @param SerializerInterface $json
+     * @param Data $helper
      */
     public function __construct(
         SourceRepositoryInterface $sourceRepository,
@@ -84,19 +87,20 @@ class CartRepositoryInterfacePlugin
             /** @var AddressExtension $addressExtensionAttributes */
             $addressExtensionAttributes = $address->getExtensionAttributes();
             if ($addressExtensionAttributes) {
-                $isCurbside = $addressExtensionAttributes->getIsCurbsidePickupLocationActive() ? '1' : '0';
-                $cart->setCurbside($isCurbside);
-                if ($addressExtensionAttributes->getPickupLocationCode() !== null) {
-                    $inventorySourceName = $this->getSourceNameByCode($addressExtensionAttributes->getPickupLocationCode());
-                    $cart->setCurbsideData($this->json->serialize(['pickup_location_name' => $inventorySourceName]));
+                if ($addressExtensionAttributes->getIsCurbsidePickupLocationActive()) {
+                    $cart->setCurbside(self::CURBSIDE_ACTIVE);
+                    if ($addressExtensionAttributes->getPickupLocationCode() !== null) {
+                        $inventorySourceName = $this->getSourceNameByCode($addressExtensionAttributes->getPickupLocationCode());
+                        $cart->setCurbsideData($this->json->serialize(['pickup_location_name' => $inventorySourceName]));
+                    }
+                    $pickUpThreshold = $this->helper->getPickupThreshold();
+                    $deliveryTime = (new \DateTime('now'));
+                    if ($pickUpThreshold !== null && (int)$pickUpThreshold > 0) {
+                        $pickUpThresholdIntervalInHours = new \DateInterval('PT' . $pickUpThreshold . 'H');
+                        $deliveryTime->add($pickUpThresholdIntervalInHours);
+                    }
+                    $cart->setCurbsideDeliveryTime($deliveryTime->format('Y-m-d H:i:s'));
                 }
-                $pickUpThreshold = $this->helper->getPickupThreshold();
-                $deliveryTime = (new \DateTime('now'));
-                if ($pickUpThreshold !== null && (int)$pickUpThreshold > 0) {
-                    $pickUpThresholdIntervalInHours = new \DateInterval('PT ' . $pickUpThreshold . 'H');
-                    $deliveryTime->add($pickUpThresholdIntervalInHours);
-                }
-                $cart->setCurbsideDeliveryTime($deliveryTime->format('Y-m-d H:i:s'));
             }
         }
         return [$cart];

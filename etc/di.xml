@@ -13,8 +13,8 @@
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
  -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
     <preference for="Magento\InventoryApi\Api\Data\SourceExtension"
                 type="ImaginationMedia\CurbsidePickup\Rewrite\Magento\InventoryApi\Api\Data\SourceExtension"/>
     <preference for="Magento\Quote\Api\Data\AddressExtension"
@@ -119,10 +119,10 @@
         <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
     </type>
     <type name="ImaginationMedia\CurbsidePickup\Controller\Order\Pickup">
-        <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
+        <plugin name="authentication_curbside_pickup_page" type="ImaginationMedia\CurbsidePickup\Plugin\AuthorizeCurbsidePickupAccess"/>
     </type>
     <type name="ImaginationMedia\CurbsidePickup\Controller\Order\PickupPost">
-        <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
+        <plugin name="authentication_curbside_pickup_page" type="ImaginationMedia\CurbsidePickup\Plugin\AuthorizeCurbsidePickupAccess"/>
     </type>
 
     <!-- Make Frontend URL access from Admin URL-->
@@ -130,5 +130,9 @@
         <arguments>
             <argument name="url" xsi:type="object">Magento\Framework\Url</argument>
         </arguments>
-    </type> 
+    </type>
+
+    <!-- Curbside Pickup Access Token Management -->
+    <preference for="ImaginationMedia\CurbsidePickup\Model\CurbsidePickupTokenManagementInterface"
+                type="ImaginationMedia\CurbsidePickup\Model\CurbsidePickupTokenManagement"/>
 </config>

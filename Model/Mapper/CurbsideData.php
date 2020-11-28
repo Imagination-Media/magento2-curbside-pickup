@@ -91,6 +91,14 @@ class CurbsideData
     }
 
     /**
+     * @return string
+     */
+    public function getScheduledPickup(): string
+    {
+        return $this->getData()->getScheduledPickup() ? 'Yes' : 'No';
+    }
+
+    /**
      * @return DataObject
      */
     public function getData(): DataObject

@@ -45,10 +45,15 @@ interface CurbsideOrderInterface
     public function updateStatus(string $status, OrderInterface $order, ?string $comment = null): ?OrderInterface;
 
     /**
-     * @param OrderInterface $order
-     * @param array $data
+     * @param string $token
      * @return null|OrderInterface
      * @throws LocalizedException
      */
-    public function saveCurbsideData(OrderInterface $order, array $data): ?OrderInterface;
+    public function getOrderByPickupToken(string $token): ?OrderInterface;
+
+    /**
+     * @param OrderInterface $order
+     * @return bool
+     */
+    public function clearPickupTokenForOrder(OrderInterface $order): bool;
 }
