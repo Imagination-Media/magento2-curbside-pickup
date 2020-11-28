@@ -100,6 +100,7 @@ class CurbsideOrderSender extends Sender
             'store' => $order->getStore(),
             'formattedShippingAddress' => $this->getFormattedShippingAddress($order),
             'formattedBillingAddress' => $this->getFormattedBillingAddress($order),
+            'is_existing_customer' => !$order->getCustomerIsGuest(),
             'order_data' => [
                 'order_url' => $this->getOrderUrl($order),
                 'pickup_url' =>  $this->getPickupUrl($order),
