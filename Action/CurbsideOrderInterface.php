@@ -45,6 +45,13 @@ interface CurbsideOrderInterface
     public function updateStatus(string $status, OrderInterface $order, ?string $comment = null): ?OrderInterface;
 
     /**
+     * @param OrderInterface $order
+     * @param array $data
+     * @return OrderInterface|null
+     */
+    public function saveCurbsideData(OrderInterface $order, array $data): ?OrderInterface;
+
+    /**
      * @param string $token
      * @return null|OrderInterface
      * @throws LocalizedException
