@@ -92,30 +92,30 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
     {
         $postData = $this->getRequest()->getParams();
         $orderId = $postData['order_id'];
-        if (!$orderId) {
-            $this->messageManager->addErrorMessage(__('No Id provided for load.'));
+        $token = $postData['token'];
+        if (!$orderId && !$token) {
+            $this->messageManager->addErrorMessage(__('Action denied.'));
         }
 
         $validFormKey = $this->formKeyValidator->validate($this->getRequest());
         if ($validFormKey && $this->getRequest()->isPost()) {
             try {
+
                 /** @var OrderInterface $order */
                 $order = $this->orderRepository->get($orderId);
                 $order = $this->curbsideOrderService->saveCurbsideData($order, $postData);
 
-                $this->curbsideOrderService->updateStatus(
-                    OrderStatus::STATUS_CUSTOMER_READY,
-                    $order,
-                    'Customer ready to pickup order'
-                );
-
-                if (isset($postData['is_scheduled_pickup'])
-                    && $this->curbsideHelper->isScheduledPickupEnabled($order->getStoreId())
-                ) {
-                    $this->messageManager->addSuccessMessage(__('Pickup has been scheduled successfully.'));
-                } else {
-                    $this->messageManager->addSuccessMessage(__('Pickup Info has been saved successfully.'));
+                if ($this->isCustomerReadyForPickup($order, $postData)) {
+                    $this->curbsideOrderService->updateStatus(
+                        OrderStatus::STATUS_CUSTOMER_READY,
+                        $order,
+                        'Customer ready to pickup order'
+                    );
+                    $this->messageManager->addSuccessMessage(__('Pick up Info has been saved successfully. Order ready for delivery.'));
+                } elseif ($this->curbsideHelper->isScheduledPickupEnabled($order->getStoreId())) {
+                    $this->messageManager->addSuccessMessage(__('Pick up has been scheduled successfully.'));
                 }
+
             } catch (\Exception $e) {
                 $this->logger->critical($e->getTraceAsString());
                 $this->messageManager->addExceptionMessage($e, __('We can\'t save the Curbside Data.'));
@@ -153,5 +153,18 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
     public function validateForCsrf(RequestInterface $request): ?bool
     {
         return null;
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @param array $postData
+     * @return bool
+     */
+    private function isCustomerReadyForPickup(OrderInterface $order, array $postData): bool
+    {
+        if (!$this->curbsideHelper->isScheduledPickupEnabled($order->getStoreId())) {
+            return true;
+        }
+        return isset($postData['scheduled_pickup']) && $postData['scheduled_pickup'] === 'Yes';
     }
 }

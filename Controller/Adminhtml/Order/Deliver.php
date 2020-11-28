@@ -94,6 +94,7 @@ class Deliver  extends Action implements HttpPostActionInterface
 
             /** @var Order\Shipment $shipment */
             $shipment = $this->curbsideOrderService->doShipment($order);
+            $this->curbsideOrderService->clearPickupTokenForOrder($order);
 
             $response = [
                 'success' => 'true',
@@ -113,10 +114,10 @@ class Deliver  extends Action implements HttpPostActionInterface
                 'message' => __('No Order with Id %1 found.', $orderId)
             ];
         } catch (\Exception $e) {
-            $this->logger->critical($e->getTraceAsString());
+            $this->logger->error($e->getMessage());
             $response = [
                 'error' => 'true',
-                'message' => $e->getMessage()
+                'message' => $e->getTraceAsString()
             ];
         }
 

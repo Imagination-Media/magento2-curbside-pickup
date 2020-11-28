@@ -8,6 +8,7 @@
  *
  * @package ImaginationMedia\CurbsidePickup
  * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -21,6 +22,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
+use ImaginationMedia\CurbsidePickup\Model\CurbsidePickupTokenManagementInterface;
 
 /**
  * Class SaveCurbsideInfo
@@ -28,6 +30,20 @@ use Magento\Sales\Model\Order;
  */
 class SaveCurbsideInfo implements ObserverInterface
 {
+    /**
+     * @var CurbsidePickupTokenManagementInterface
+     */
+    private CurbsidePickupTokenManagementInterface $pickupTokenManagement;
+
+    /**
+     * SaveCurbsideInfo constructor.
+     * @param CurbsidePickupTokenManagementInterface $pickupTokenManagement
+     */
+    public function __construct(CurbsidePickupTokenManagementInterface $pickupTokenManagement)
+    {
+        $this->pickupTokenManagement = $pickupTokenManagement;
+    }
+
     /**
      * @param Observer $observer
      */
@@ -44,6 +60,9 @@ class SaveCurbsideInfo implements ObserverInterface
             $order->setData(CurbsideOrder::FIELD_CURBSIDE, true);
             $order->setData(CurbsideOrder::FIELD_CURBSIDE_DATA, $quote->getData(CurbsideOrder::FIELD_CURBSIDE_DATA));
             $order->setData(CurbsideOrder::FIELD_CURBSIDE_DELIVERY_TIME, $quote->getData(CurbsideOrder::FIELD_CURBSIDE_DELIVERY_TIME));
+
+            $token = $this->pickupTokenManagement->generateToken();
+            $order->setData(CurbsideOrder::FIELD_CURBSIDE_PICKUP_TOKEN, $token);
         }
     }
 }

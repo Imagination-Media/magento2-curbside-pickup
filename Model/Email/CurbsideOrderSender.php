@@ -157,7 +157,11 @@ class CurbsideOrderSender extends Sender
      */
     private function getPickupUrl(Order $order): string
     {
-        return $this->url->getUrl('curbside/order/pickup',  ['order_id' => $order->getEntityId()]);
+        $url = $this->url->getUrl('curbside/order/pickup', $this->getParams($order));
+        if ($this->getQueryString($order)) {
+            return $url . $this->getQueryString($order);
+        }
+        return $url;
     }
 
     /**
@@ -166,6 +170,33 @@ class CurbsideOrderSender extends Sender
      */
     private function getOrderUrl(Order $order): string
     {
-        return $this->url->getUrl('curbside/order/view', ['order_id' => $order->getEntityId()]);
+        $url = $this->url->getUrl('curbside/order/view', $this->getParams($order));
+        if ($this->getQueryString($order)) {
+            return $url . $this->getQueryString($order);
+        }
+        return $url;
+    }
+
+    /**
+     * @param Order $order
+     * @return string|null
+     */
+    private function getQueryString(Order $order): ?string
+    {
+        if ($order->getCustomerIsGuest() && $order->getCurbsidePickupToken() !== null) {
+            return '?token=' . $order->getCurbsidePickupToken();
+        }
+        return null;
+    }
+
+    /**
+     * @param Order $order
+     * @return array
+     */
+    private function getParams(Order $order): array
+    {
+        return $order->getCustomerIsGuest()
+            ? [] :
+            ['order_id' => $order->getEntityId()];
     }
 }

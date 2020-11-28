@@ -15,11 +15,12 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\CurbsidePickup\ViewModel;
 
+use ImaginationMedia\CurbsidePickup\Action\CurbsideOrderInterface;
+use ImaginationMedia\CurbsidePickup\Model\Mapper\CurbsideData;
 use ImaginationMedia\CurbsidePickup\Model\Mapper\CurbsideDataFactory;
 use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\DataObject;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
@@ -60,7 +61,15 @@ class OrderPickup implements ArgumentInterface
     private Data $helper;
 
     /**
+     * @var CurbsideOrderInterface
+     */
+    private CurbsideOrderInterface $curbsideOrderService;
+
+    private  $token = null;
+
+    /**
      * OrderPickup constructor.
+     * @param CurbsideOrderInterface $curbsideOrderService
      * @param CurbsideDataFactory $curbsideDataFactory
      * @param SerializerInterface $json
      * @param RequestInterface $request
@@ -69,6 +78,7 @@ class OrderPickup implements ArgumentInterface
      * @param Context $context
      */
     public function __construct(
+        CurbsideOrderInterface $curbsideOrderService,
         CurbsideDataFactory $curbsideDataFactory,
         SerializerInterface $json,
         RequestInterface $request,
@@ -82,14 +92,15 @@ class OrderPickup implements ArgumentInterface
         $this->request = $request;
         $this->curbsideDataFactory = $curbsideDataFactory;
         $this->helper = $helper;
+        $this->curbsideOrderService = $curbsideOrderService;
     }
 
     /**
-     * @return DataObject
+     * @return CurbsideData
      */
-    public function getCurbsideData(): DataObject
+    public function getCurbsideData(): CurbsideData
     {
-        return $this->curbsideDataFactory->create(['order' => $this->getOrder()])->getData();
+        return $this->curbsideDataFactory->create(['order' => $this->getOrder()]);
     }
 
     /**
@@ -137,7 +148,7 @@ class OrderPickup implements ArgumentInterface
      */
     public function getPickupButtonTitle(): ?string
     {
-       if ($this->isScheduledPickupActive()) {
+       if ($this->isScheduledPickupActive() && !$this->isOrderScheduledForPickup()) {
             return 'Schedule Pick Up';
         }
         return 'I\'m here';
@@ -188,11 +199,44 @@ class OrderPickup implements ArgumentInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isOrderScheduledForPickup(): bool
+    {
+        return $this->getCurbsideData()->getScheduledPickup() === 'Yes';
+    }
+
+    /**
      * @return OrderInterface|null
      */
     private function getOrder():  ?OrderInterface
     {
         $orderId = $this->request->getParam('order_id');
+        if ($orderId === null) {
+            $token = $this->getPickupAccessToken();
+            return $this->curbsideOrderService->getOrderByPickupToken($token);
+        }
+
         return $this->orderRepository->get($orderId);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPickupAccessTokenQueryString(): string
+    {
+        $token = $this->getPickupAccessToken();
+        return $token ? '?token=' . $token : '';
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPickupAccessToken(): ?string
+    {
+        if ($this->token === null) {
+            $this->token = $this->request->getParam('token');
+        }
+        return $this->token;
     }
 }

@@ -30,6 +30,7 @@ class CurbsideOrder
     public const FIELD_CURBSIDE               = "curbside";
     public const FIELD_CURBSIDE_DATA          = "curbside_data";
     public const FIELD_CURBSIDE_DELIVERY_TIME = "curbside_delivery_time";
+    public const FIELD_CURBSIDE_PICKUP_TOKEN = "curbside_pickup_token";
 
     /**
      * @var InvoiceRepositoryInterface

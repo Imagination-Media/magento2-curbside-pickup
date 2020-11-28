@@ -194,13 +194,14 @@ class CurbsideOrder implements CurbsideOrderInterface
             }
             $existingData = $this->json->unserialize($order->getCurbsideData());
             foreach ($data as $key => $value) {
-                if ($value !== null && $value !=='' && in_array($key, [
+                if ($value !== null && $value !== '' && in_array($key, [
                         'car_model',
                         'car_plate',
                         'car_color',
                         'note',
                         'pickup_location_name',
-                        'parking_spot'
+                        'parking_spot',
+                        'scheduled_pickup'
                     ])
                 ) {
                     $existingData[$key]= $value;

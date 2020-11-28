@@ -50,11 +50,12 @@ class Pickup extends Action implements OrderInterface, HttpGetActionInterface
     public function execute(): ResultInterface
     {
         $orderId = $this->getRequest()->getParam('order_id');
+        $token = $this->getRequest()->getParam('token');
 
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $block = $resultPage->getLayout()->getBlock('curbside_pickup_form');
-        if ($block || !$orderId) {
+        if ($block || !$orderId || $token) {
             $block->setRefererUrl($this->_redirect->getRefererUrl());
         }
         $resultPage->getConfig()->getTitle()->set(__('Curbside Pickup # %1', $orderId));
