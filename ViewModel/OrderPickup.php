@@ -151,7 +151,7 @@ class OrderPickup implements ArgumentInterface
        if ($this->isScheduledPickupActive() && !$this->isOrderScheduledForPickup()) {
             return 'Schedule Pick Up';
         }
-        return 'I\'m here';
+        return 'I\'m on Location ready';
     }
 
     /**
@@ -164,19 +164,16 @@ class OrderPickup implements ArgumentInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSoonestDeliveryTime(): string
+    public function getSoonestDeliveryTime(): ?string
     {
-        $store = $this->getOrder()->getStoreId();
-        $deliveryThreshold = $this->helper->getPickupThreshold($store);
-
-        $deliveryDate = new \DateTime('now');
-        if ($deliveryThreshold) {
-            $thresholdTimeSpan = new \DateInterval('PT' . $deliveryThreshold . 'H');
-            $deliveryDate = $deliveryDate->add($thresholdTimeSpan);
+        $order = $this->getOrder();
+        if ($order && $order->getCurbsideDeliveryTime() !== null) {
+            $deliveryDate = (new \DateTime($this->getOrder()->getCurbsideDeliveryTime()));
+            return $deliveryDate->format('m/d/y h:i A');
         }
-        return $deliveryDate->format('m/d/y h:i');
+        return null;
     }
 
     /**
