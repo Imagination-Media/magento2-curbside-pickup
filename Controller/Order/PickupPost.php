@@ -113,7 +113,9 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
                     );
                     $this->messageManager->addSuccessMessage(__('Pick up Info has been saved successfully. Order ready for delivery.'));
                 } elseif ($this->curbsideHelper->isScheduledPickupEnabled($order->getStoreId())) {
-                    $this->messageManager->addSuccessMessage(__('Pick up has been scheduled successfully.'));
+                    $this->messageManager->addSuccessMessage(
+                        __('Pick up has been scheduled successfully. Please inform us once when on location for Pick Up.')
+                    );
                 }
 
             } catch (\Exception $e) {
