@@ -16,8 +16,11 @@ declare(strict_types=1);
 namespace ImaginationMedia\CurbsidePickup\Model\Action;
 
 use ImaginationMedia\CurbsidePickup\Action\CurbsideOrderInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\State\ExpiredException;
+use Magento\Framework\Phrase;
 use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
@@ -31,6 +34,7 @@ use Magento\Shipping\Model\ShipmentNotifier;
 use Psr\Log\LoggerInterface;
 use ImaginationMedia\CurbsidePickup\Model\CurbsideOrder as CurbsideOrderModel;
 use Magento\Framework\Serialize\SerializerInterface;
+use ImaginationMedia\CurbsidePickup\Model\ResourceModel\CurbsideOrder as CurbsideOrderResource;
 
 class CurbsideOrder implements CurbsideOrderInterface
 {
@@ -52,17 +56,17 @@ class CurbsideOrder implements CurbsideOrderInterface
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * @var InvoiceSender
      */
-    private $invoiceSender;
+    private InvoiceSender $invoiceSender;
 
     /**
      * @var CurbsideOrderModel
      */
-    private $curbsideOrderModel;
+    private CurbsideOrderModel $curbsideOrderModel;
 
     /**
      * @var SerializerInterface
@@ -70,6 +74,17 @@ class CurbsideOrder implements CurbsideOrderInterface
     private $json;
 
     /**
+     * @var SearchCriteriaBuilder
+     */
+    private SearchCriteriaBuilder $searchCriteriaBuilder;
+    /**
+     * @var CurbsideOrderResource
+     */
+    private CurbsideOrderResource $curbsideOrderResource;
+
+    /**
+     * @param CurbsideOrderResource $curbsideOrderResource
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param CurbsideOrderModel $curbsideOrderModel
      * @param ShipmentRepositoryInterface $shipmentRepository
      * @param OrderRepositoryInterface $orderRepository
@@ -79,6 +94,8 @@ class CurbsideOrder implements CurbsideOrderInterface
      * @param LoggerInterface $logger
      */
     public function __construct(
+        CurbsideOrderResource $curbsideOrderResource,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
         CurbsideOrderModel $curbsideOrderModel,
         ShipmentRepositoryInterface $shipmentRepository,
         OrderRepositoryInterface $orderRepository,
@@ -94,6 +111,8 @@ class CurbsideOrder implements CurbsideOrderInterface
         $this->invoiceSender = $invoiceSender;
         $this->curbsideOrderModel = $curbsideOrderModel;
         $this->json = $json;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->curbsideOrderResource = $curbsideOrderResource;
     }
 
     /**
@@ -192,7 +211,8 @@ class CurbsideOrder implements CurbsideOrderInterface
                 $deliveryTime = new \DateTime($data['curbside_delivery_time']);
                 $order->setCurbsideDeliveryTime($deliveryTime->format('Y-m-d H:i:s'));
             }
-            $existingData = $this->json->unserialize($order->getCurbsideData());
+
+            $existingData = $order->getCurbsideData() ? $this->json->unserialize($order->getCurbsideData()) : [];
             foreach ($data as $key => $value) {
                 if ($value !== null && $value !== '' && in_array($key, [
                         'car_model',
@@ -207,8 +227,7 @@ class CurbsideOrder implements CurbsideOrderInterface
                     $existingData[$key]= $value;
                 }
             }
-            $dataJson = $this->json->serialize($existingData);
-            $order->setCurbsideData($dataJson);
+            $order->setCurbsideData($this->json->serialize($existingData));
 
             /** @var Order $order */
             $order = $this->orderRepository->save($order);
@@ -218,5 +237,48 @@ class CurbsideOrder implements CurbsideOrderInterface
         }
 
         return null;
+    }
+
+    /**
+     * @param string $token
+     * @return null|OrderInterface
+     * @throws LocalizedException
+     */
+    public function getOrderByPickupToken(string $token): ?OrderInterface
+    {
+        $this->searchCriteriaBuilder->addFilter('curbside_pickup_token', $token);
+        $this->searchCriteriaBuilder->setPageSize(1);
+
+        $result = $this->orderRepository->getList($this->searchCriteriaBuilder->create());
+        if ($result->getTotalCount() > 1) {
+            throw new ExpiredException(
+                new Phrase('Access token expired.')
+            );
+        }
+        if ($result->getTotalCount() === 0) {
+            new NoSuchEntityException(
+                new Phrase(
+                    'No such entity with curbside_pickup_token = %value',
+                    [
+                        'value' => $token
+                    ]
+                )
+            );
+        }
+
+        return $result->getFirstItem();
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return bool
+     */
+    public function clearPickupTokenForOrder(OrderInterface $order): bool
+    {
+        $orderId = $order->getEntityId();
+        if (!$orderId) {
+            return false;
+        }
+        return $this->curbsideOrderResource->persistToken($orderId) === 1;
     }
 }
