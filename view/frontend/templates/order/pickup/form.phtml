@@ -133,7 +133,11 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
             </div>
         </div>
 
-        <?php if ($isPickupScheduledForStore && $editMode && !$pickupViewModel->isOrderPickedUp()): ?>
+        <?php if ($isPickupScheduledForStore
+            && $editMode
+            && !$pickupViewModel->isOrderPickedUp()
+            && !$pickupViewModel->isOrderScheduledForPickup()
+        ): ?>
             <div class="field scheduled-pickup" data-container="scheduled-pickup">
                 <label class="label" for="scheduled_pickup">
                     <span><?= $escaper->escapeHtml(__('Pick up Time')) ?></span>
@@ -221,7 +225,10 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
     <?php endif; ?>
 </form>
 
-<?php if (!$pickupViewModel->isOrderPickedUp() && $isPickupScheduledForStore): ?>
+<?php if (!$pickupViewModel->isOrderPickedUp()
+    && $isPickupScheduledForStore
+    && !$pickupViewModel->isOrderScheduledForPickup()
+): ?>
     <?php $scriptString= <<<script
         require([
                 'jquery',
