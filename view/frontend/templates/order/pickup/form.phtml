@@ -199,7 +199,8 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
         <p class="pickup-availability"><?= $escaper->escapeHtml(__('Order scheduled for pick up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
     <?php elseif ($pickupViewModel->isOrderPickedUp()): ?>
         <p class="picked-up"><?= $escaper->escapeHtml(__('Order completed/delivered up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
-    <?php elseif (!$pickupViewModel->isCustomerReadyToPickUp()): ?>
+    <?php endif; ?>
+    <?php if (!$pickupViewModel->isCustomerReadyToPickUp()): ?>
         <div class="actions-toolbar">
             <div class="primary">
                 <button type="submit" class="action pickup-action primary" title="<?= $escaper->escapeHtmlAttr(__($actionButtonTitle)) ?>">
