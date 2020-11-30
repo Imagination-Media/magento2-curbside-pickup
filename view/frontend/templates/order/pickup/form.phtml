@@ -200,7 +200,11 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
     </fieldset>
 
     <?php if ($pickupViewModel->isOrderScheduledForPickup() && !$pickupViewModel->isOrderPickedUp()): ?>
+        <?php if ($isPickupScheduledForStore): ?>
         <p class="pickup-availability"><?= $escaper->escapeHtml(__('Order scheduled for pick up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
+        <?php else: ?>
+        <p class="pickup-availability"><?= $escaper->escapeHtml(__('Your Order will be available for pick up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
+        <?php endif; ?>
     <?php elseif ($pickupViewModel->isOrderPickedUp()): ?>
         <p class="picked-up"><?= $escaper->escapeHtml(__('Order completed/delivered up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
     <?php endif; ?>
