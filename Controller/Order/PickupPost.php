@@ -92,7 +92,7 @@ class PickupPost extends Action implements CsrfAwareActionInterface, HttpPostAct
     {
         $postData = $this->getRequest()->getParams();
         $orderId = $postData['order_id'];
-        $token = $postData['token'];
+        $token = isset($postData['token']) ? $postData['token'] : null;
         if (!$orderId && !$token) {
             $this->messageManager->addErrorMessage(__('Action denied.'));
         }
