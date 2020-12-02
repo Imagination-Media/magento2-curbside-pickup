@@ -1,6 +1,6 @@
 
 ## Curbside Pickup Module
-This Curbside Pickup Module enhances the Buy Online Pick-up In Store (BOPIS) functionality added in the Magento 2.4.1 release.  It will support retailers that use Magento Multi-Source Invenetory (MSI) and those that do not use MSI.  The module allows for modifying the Ready for Pickup notification to include a URL that takes the customer to a simplified UI displaying their order information and allowing them to input their car's make/model/color.  The customer will click this link and enter their information upon arrival at the retailer's physical store.  The entry of this information will trigger a notification to the store that will prompt them to deliver the customer's order to their vehicle at curbside.
+This Curbside Pickup Module enhances the Buy Online Pick-up In Store (BOPIS) functionality added in the Magento 2.4.1 release.  It will support retailers that use Magento Multi-Source Inventory (MSI) and those that do not use MSI.  The module allows for modifying the Ready for Pickup notification to include a URL that takes the customer to a simplified UI displaying their order information and allowing them to input their car info, parking location, and requested pickup time.  The customer will click this link and enter their information upon arrival at the retailer's physical store.  The entry of this information will trigger a notification to the store that will prompt them to deliver the customer's order to their vehicle at curbside.
 
 ## System Requirements
 
