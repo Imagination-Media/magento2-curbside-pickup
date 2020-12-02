@@ -8,6 +8,7 @@
  *
  * @package ImaginationMedia\CurbsidePickup
  * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -27,5 +28,15 @@
         <column xsi:type="boolean" name="curbside" nullable="false" default="false" comment="Curbside - Is a curbside order?" />
         <column xsi:type="text" name="curbside_data" nullable="true" comment="Curbside - Additional data" />
         <column xsi:type="datetime" name="curbside_delivery_time" nullable="true" comment="Curbside - Delivery time" />
+        <column xsi:type="varchar" name="curbside_pickup_token" nullable="true" length="128" comment="Curbside Access Token"/>
+
+        <constraint xsi:type="unique" referenceId="SALES_ORDER_CURBSIDE_ACCESS_TOKEN">
+            <column name="curbside_pickup_token"/>
+        </constraint>
+    </table>
+
+    <!-- Columns on the inventory_source table -->
+    <table name="inventory_source">
+        <column xsi:type="boolean" name="is_curbside_pickup_location_active" nullable="false" default="0"/>
     </table>
 </schema>

@@ -1,0 +1,67 @@
+<?php
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+/** @var \Magento\Sales\Block\Order\View $block */
+
+use ImaginationMedia\CurbsidePickup\ViewModel\OrderView;
+use Magento\Framework\Escaper;
+use Magento\GiftMessage\Helper\Message;
+
+/** @var Escaper $escaper */
+
+/** @var OrderView $curbsideViewModel */
+$curbsideViewModel = $block->getData('curbsideViewModel');
+?>
+<?php /** @var  $block \Magento\Sales\Block\Order\View */?>
+
+<div class="order-details-items ordered">
+    <?php $_order = $block->getOrder() ?>
+
+    <div class="order-title">
+        <strong><?= $escaper->escapeHtml(__('Items Ordered')) ?></strong>
+        <?php if (!empty($_order->getTracksCollection()->getItems())) : ?>
+            <?= $block->getChildHtml('tracking-info-link') ?>
+        <?php endif; ?>
+    </div>
+
+    <?= $block->getChildHtml('order_items') ?>
+
+    <?php if ($this->helper(Message::class)->isMessagesAllowed('order', $_order)
+        && $_order->getGiftMessageId()
+    ) : ?>
+    <div class="block block-order-details-gift-message">
+        <div class="block-title"><strong><?= $escaper->escapeHtml(__('Gift Message for This Order')) ?></strong></div>
+        <?php
+        $_giftMessage = $this->helper(Message::class)->getGiftMessageForEntity($_order);
+        ?>
+        <div class="block-content">
+            <dl class="item-options">
+                <dt class="item-sender"><strong class="label"><?= $escaper->escapeHtml(__('From')) ?></strong><?= $escaper->escapeHtml($_giftMessage->getSender()) ?></dt>
+                <dt class="item-recipient"><strong class="label"><?= $escaper->escapeHtml(__('To')) ?></strong><?= $escaper->escapeHtml($_giftMessage->getRecipient()) ?></dt>
+                <dd class="item-message">
+                    <?= /* @noEscape */
+                    $this->helper(Message::class)->getEscapedGiftMessage($_order) ?>
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <div class="actions-toolbar">
+        <div class="secondary">
+            <a class="action back" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>">
+                <span><?= $escaper->escapeHtml($curbsideViewModel->getBackTitle()) ?></span>
+            </a>
+        </div>
+    </div>
+</div>

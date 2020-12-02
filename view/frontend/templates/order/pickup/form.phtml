@@ -1,0 +1,260 @@
+<?php
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+/** @var Template $block */
+
+use ImaginationMedia\CurbsidePickup\Model\Mapper\CurbsideData;
+use ImaginationMedia\CurbsidePickup\ViewModel\OrderPickup;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+
+/** @var SecureHtmlRenderer $secureRenderer */
+
+/** @var Escaper $escaper */
+
+/** @var Template $block */
+
+/** @var OrderPickup $pickupViewModel */
+$pickupViewModel = $block->getData('pickupViewModel');
+
+/** @var CurbsideData $curbsideData */
+$curbsideData = $pickupViewModel->getCurbsideData();
+$isPickupScheduledForStore = $pickupViewModel->isScheduledPickupActive();
+$editMode = $pickupViewModel->isCustomerReadyToPickUp() || $pickupViewModel->isOrderPickedUp() ? false : true;
+$actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
+?>
+
+<form class="form form-edit-curbside-pickup"
+      action="<?= $escaper->escapeUrl($block->getUrl('curbside/order/pickupPost')) . $pickupViewModel->getPickupAccessTokenQueryString() ?>"
+      method="post" id="form-validate"
+      enctype="multipart/form-data"
+      autocomplete="off">
+
+    <fieldset class="fieldset pickup-info">
+
+        <?= $block->getBlockHtml('formkey') ?>
+        <legend class="legend"><span><?= $escaper->escapeHtml(__('Order Pickup Information')) ?></span></legend><br>
+
+        <div class="field car-model" data-container="car-model">
+            <label class="label" for="car_model">
+                <span><?= $escaper->escapeHtml(__('Car Model')) ?></span>
+            </label>
+            <div class="control">
+                <?php if ($editMode): ?>
+                    <input type="text"
+                           class="input-text"
+                           name="car_model"
+                           data-input="car-model"
+                           autocomplete="off"
+                           value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarModel()) ?>"
+                    />
+                <?php else: ?>
+                    <p><?= $escaper->escapeHtml($curbsideData->getCarModel() ?? '-') ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="field car-plate" data-container="car-plate">
+            <label class="label" for="car_plate">
+                <span><?= $escaper->escapeHtml(__('Car Plate')) ?></span>
+            </label>
+            <div class="control">
+                <?php if ($editMode): ?>
+                    <input type="text"
+                       class="input-text"
+                       name="car_plate"
+                       data-input="car-plate"
+                       autocomplete="off"
+                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarPlate()) ?>"
+                />
+                <?php else: ?>
+                <p><?= $escaper->escapeHtml($curbsideData->getCarPlate()) ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="field car-color" data-container="car-color">
+            <label class="label" for="car_color">
+                <span><?= $escaper->escapeHtml(__('Car Color')) ?></span>
+            </label>
+            <div class="control">
+                <?php if ($editMode): ?>
+                    <input type="text"
+                       class="input-text"
+                       name="car_color"
+                       data-input="car-color"
+                       autocomplete="off"
+                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarColor()) ?>"
+                />
+                <?php else: ?>
+                <p><?= $escaper->escapeHtml($curbsideData->getCarColor()) ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php if ($curbsideData->getPickupLocationName()): ?>
+        <div class="field pickup-location" data-container="pickup-location">
+            <label class="label" for="pickup_location">
+                <span><?= $escaper->escapeHtml(__('Pickup Location')) ?></span>
+            </label>
+            <div class="control">
+                <p><?= $escaper->escapeHtml($curbsideData->getPickupLocationName()) ?></p>
+            </div>
+        </div>
+        <?php endif ?>
+
+        <div class="field parking-spot" data-container="parking-spot">
+            <label class="label" for="parking_spot">
+                <span><?= $escaper->escapeHtml(__('Parking Spot')) ?></span>
+            </label>
+            <div class="control">
+                <?php if ($editMode): ?>
+                    <input type="text"
+                           class="input-text"
+                           name="parking_spot"
+                           data-input="parking-spot"
+                           autocomplete="off"
+                           value="<?= $escaper->escapeHtmlAttr($curbsideData->getParkingSpot()) ?>"
+                    />
+                <?php else: ?>
+                    <p><?= $escaper->escapeHtml($curbsideData->getParkingSpot()) ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php if ($isPickupScheduledForStore
+            && $editMode
+            && !$pickupViewModel->isOrderPickedUp()
+            && !$pickupViewModel->isOrderScheduledForPickup()
+        ): ?>
+            <div class="field scheduled-pickup" data-container="scheduled-pickup">
+                <label class="label" for="scheduled_pickup">
+                    <span><?= $escaper->escapeHtml(__('Pick up Time')) ?></span>
+                </label>
+                <div class="control">
+                    <input type="text"
+                           class="admin__control-text required-entry _required admin__control-text input-text input-date hasDatepicker"
+                           placeholder="<?= $escaper->escapeHtmlAttr(__('Select Time')) ?>"
+                           name="curbside_delivery_time"
+                           id="scheduled_pickup"
+                           data-input="scheduled-pickup"
+                           autocomplete="off"
+                           value="<?= $escaper->escapeHtmlAttr($pickupViewModel->getPickupScheduledTime()) ?>"
+                    />
+                    <p class="delivery-note"><?= $escaper->escapeHtmlAttr(__('According to the soonest time available.')); ?></p>
+                </div>
+                <div class="field order_id" data-container="order-id">
+                    <div class="control">
+                        <input type="hidden"
+                               id="min_date"
+                               value="<?= strtotime($pickupViewModel->getSoonestDeliveryTime()) ?>"
+                        />
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($editMode): ?>
+            <div class="field order_id" data-container="order-id">
+                <div class="control">
+                    <input type="hidden"
+                           name="order_id"
+                           value="<?= $pickupViewModel->getOrderId() ?>"
+                    />
+                </div>
+            </div>
+        <?php endif; ?>
+    </fieldset>
+
+    <fieldset class="fieldset additional_info">
+        <div class="field note" data-container="note">
+            <label class="label" for="note">
+                <span><?= $escaper->escapeHtml(__('Note:')) ?></span>
+            </label>
+            <div class="control">
+                <?php if ($editMode): ?>
+                    <textarea type="text"
+                          maxlength="300"
+                          rows="4"
+                          cols="10"
+                          class="input-text"
+                          name="note" autocomplete="off">
+                            <?= $curbsideData->getNote() ?>
+                    </textarea>
+                <?php else: ?>
+                <p><?= $escaper->escapeHtml($curbsideData->getNote()) ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </fieldset>
+
+    <?php if ($pickupViewModel->isOrderScheduledForPickup() && !$pickupViewModel->isOrderPickedUp()): ?>
+        <?php if ($isPickupScheduledForStore): ?>
+        <p class="pickup-availability"><?= $escaper->escapeHtml(__('Order scheduled for pick up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
+        <?php else: ?>
+        <p class="pickup-availability"><?= $escaper->escapeHtml(__('Your Order will be available for pick up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
+        <?php endif; ?>
+    <?php elseif ($pickupViewModel->isOrderPickedUp()): ?>
+        <p class="picked-up"><?= $escaper->escapeHtml(__('Order completed/delivered up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
+    <?php endif; ?>
+    <?php if (!$pickupViewModel->isCustomerReadyToPickUp()): ?>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button type="submit" class="action pickup-action primary" title="<?= $escaper->escapeHtmlAttr(__($actionButtonTitle)) ?>">
+                    <span><?= $escaper->escapeHtml(__($actionButtonTitle)) ?></span>
+                </button>
+            </div>
+        </div>
+        <?php if ($editMode): ?>
+            <div class="field scheduled_pickup" data-container="scheduled-pickup-action">
+                <div class="control">
+                    <input type="hidden"
+                           name="scheduled_pickup"
+                           value="<?= $curbsideData->getScheduledPickup() ?>"
+                    />
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</form>
+
+<?php if (!$pickupViewModel->isOrderPickedUp()
+    && $isPickupScheduledForStore
+    && !$pickupViewModel->isOrderScheduledForPickup()
+): ?>
+    <?php $scriptString= <<<script
+        require([
+                'jquery',
+                'mage/mage',
+                'mage/calendar'
+            ], function ($) {
+                var minDate = new Date($('#min_date').val());
+
+                //<![CDATA[
+                $('#scheduled_pickup').calendar({
+                    dateFormat: 'm/d/y',
+                    timeFormat: 'hh:mm tt',
+                    changeYear: true,
+                    changeMonth: true,
+                    showHour: true,
+                    showMinute: true,
+                    showsTime: true,
+                    minDate: minDate
+                });
+                //]]>
+            });
+        script;
+    ?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+<?php endif; ?>

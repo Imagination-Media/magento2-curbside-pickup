@@ -7,24 +7,21 @@
  * adding an option for a curbside pick up
  *
  * @package ImaginationMedia\CurbsidePickup
- * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
--->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceContainer name="sidebar.main">
-            <referenceBlock name="customer_account_navigation">
-                <block class="Magento\Customer\Block\Account\SortLinkInterface" name="curbside-orders">
-                    <arguments>
-                        <argument name="path" xsi:type="string">curbside/order</argument>
-                        <argument name="label" xsi:type="string" translate="true">Curbside Orders</argument>
-                        <argument name="sortOrder" xsi:type="number">221</argument>
-                    </arguments>
-                </block>
-            </referenceBlock>
-        </referenceContainer>
+        <referenceBlock name="customer_account_navigation">
+            <block class="Magento\Customer\Block\Account\SortLinkInterface" name="customer-account-navigation-curbside-orders-link">
+                <arguments>
+                    <argument name="path" xsi:type="string">curbside/order/history</argument>
+                    <argument name="label" xsi:type="string" translate="true">My Curbside Orders</argument>
+                    <argument name="sortOrder" xsi:type="number">220</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
     </body>
 </page>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <update handle="sales_order_view"/>
+    <head>
+        <css src="ImaginationMedia_CurbsidePickup::css/curbside_pickup/view.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <referenceContainer name="js">
+                <block template="ImaginationMedia_CurbsidePickup::order/grid/colors-css.phtml" before="curbsidepickup.js" name="curbsidepickup.colors" >
+                    <arguments>
+                        <argument name="colorViewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderStatusColors</argument>
+                    </arguments>
+                </block>
+                <block template="ImaginationMedia_CurbsidePickup::order/js/info.phtml" name="curbside_order_info.js">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">ImaginationMedia\CurbsidePickup\ViewModel\Adminhtml\OrderInfo</argument>
+                    </arguments>
+                </block>
+            </referenceContainer>
+        </referenceContainer>
+    </body>
+</layout>

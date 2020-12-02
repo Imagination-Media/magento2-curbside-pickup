@@ -7,11 +7,11 @@
  * adding an option for a curbside pick up
  *
  * @package ImaginationMedia\CurbsidePickup
- * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
--->
+ -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="standard">
         <route id="curbside" frontName="curbside">

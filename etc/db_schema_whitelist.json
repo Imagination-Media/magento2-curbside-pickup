@@ -1,0 +1,25 @@
+{
+    "inventory_source": {
+        "column": {
+            "is_curbside_pickup_location_active": true
+        }
+    },
+    "quote": {
+        "column": {
+            "curbside": true,
+            "curbside_data": true,
+            "curbside_delivery_time": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "curbside": true,
+            "curbside_data": true,
+            "curbside_delivery_time": true,
+            "curbside_pickup_token": true
+        },
+        "constraint": {
+            "SALES_ORDER_CURBSIDE_PICKUP_TOKEN": true
+        }
+    }
+}

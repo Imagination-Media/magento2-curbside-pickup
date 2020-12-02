@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Denis Colli Spalenza <denis@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <columns name="inventory_source_listing_columns">
+        <column name="is_curbside_pickup_location_active"
+                component="Magento_Ui/js/grid/columns/select"
+                class="ImaginationMedia\CurbsidePickup\Ui\Component\Listing\Column\IsCurbsidePickupLocationActive"
+                sortOrder="60">
+            <settings>
+                <dataType>select</dataType>
+                <filter>select</filter>
+                <label translate="true">Curbside Pickup Location</label>
+                <options>
+                    <option name="1" xsi:type="array">
+                        <item name="value" xsi:type="number">1</item>
+                        <item name="label" xsi:type="string" translate="true">Active</item>
+                    </option>
+                    <option name="0" xsi:type="array">
+                        <item name="value" xsi:type="number">0</item>
+                        <item name="label" xsi:type="string" translate="true">Disabled</item>
+                    </option>
+                </options>
+            </settings>
+        </column>
+    </columns>
+</listing>

@@ -8,6 +8,7 @@
  *
  * @package ImaginationMedia\CurbsidePickup
  * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -16,10 +17,12 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\CurbsidePickup\Observer\Quote\PlaceOrder;
 
+use ImaginationMedia\CurbsidePickup\Model\CurbsideOrder;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
+use ImaginationMedia\CurbsidePickup\Model\CurbsidePickupTokenManagementInterface;
 
 /**
  * Class SaveCurbsideInfo
@@ -27,10 +30,19 @@ use Magento\Sales\Model\Order;
  */
 class SaveCurbsideInfo implements ObserverInterface
 {
+    /**
+     * @var CurbsidePickupTokenManagementInterface
+     */
+    private CurbsidePickupTokenManagementInterface $pickupTokenManagement;
 
-    public const FIELD_CURBSIDE               = "curbside";
-    public const FIELD_CURBSIDE_DATA          = "curbside_data";
-    public const FIELD_CURBSIDE_DELIVERY_TIME = "curbside_delivery_time";
+    /**
+     * SaveCurbsideInfo constructor.
+     * @param CurbsidePickupTokenManagementInterface $pickupTokenManagement
+     */
+    public function __construct(CurbsidePickupTokenManagementInterface $pickupTokenManagement)
+    {
+        $this->pickupTokenManagement = $pickupTokenManagement;
+    }
 
     /**
      * @param Observer $observer
@@ -44,10 +56,13 @@ class SaveCurbsideInfo implements ObserverInterface
         $quote = $observer->getData("quote");
         $order = $observer->getData("order");
 
-        if ($quote->getData(self::FIELD_CURBSIDE)) {
-            $order->setData(self::FIELD_CURBSIDE, true);
-            $order->setData(self::FIELD_CURBSIDE_DATA, $quote->getData(self::FIELD_CURBSIDE_DATA));
-            $order->setData(self::FIELD_CURBSIDE_DELIVERY_TIME, $quote->getData(self::FIELD_CURBSIDE_DELIVERY_TIME));
+        if ($quote->getData(CurbsideOrder::FIELD_CURBSIDE)) {
+            $order->setData(CurbsideOrder::FIELD_CURBSIDE, true);
+            $order->setData(CurbsideOrder::FIELD_CURBSIDE_DATA, $quote->getData(CurbsideOrder::FIELD_CURBSIDE_DATA));
+            $order->setData(CurbsideOrder::FIELD_CURBSIDE_DELIVERY_TIME, $quote->getData(CurbsideOrder::FIELD_CURBSIDE_DELIVERY_TIME));
+
+            $token = $this->pickupTokenManagement->generateToken();
+            $order->setData(CurbsideOrder::FIELD_CURBSIDE_PICKUP_TOKEN, $token);
         }
     }
 }

@@ -8,6 +8,7 @@
  *
  * @package ImaginationMedia\CurbsidePickup
  * @author Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
  * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
  * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
@@ -16,6 +17,10 @@
     <module name="ImaginationMedia_CurbsidePickup">
         <sequence>
             <module name="Magento_InventoryInStorePickup"/>
+            <module name="Magento_Checkout"/>
+            <module name="Magento_Backend"/>
+            <module name="Magento_Ui"/>
+            <module name="Magento_Sales" />
         </sequence>
     </module>
 </config>

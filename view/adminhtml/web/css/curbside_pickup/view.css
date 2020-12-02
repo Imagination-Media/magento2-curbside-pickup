@@ -1,0 +1,48 @@
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+-->
+
+span.curbside-accepted {
+    background-color: var(--accepted);
+}
+
+span.curbside-ready {
+    background-color: var(--pickup-ready);
+}
+
+span.curbside-customer-ready {
+    background-color: var(--customer-ready);
+}
+
+span.pending {
+    background-color: var(--pending);
+}
+
+span.delivered {
+    background-color: var(--delivered);
+}
+
+.curbside_data_label {
+    font-weight: 800;
+}
+
+.curbside-status {
+    padding: 3px;
+}
+
+.curbside_data_list li {
+    margin-bottom: 0.25rem;
+    list-style-type: none;
+}
+
+

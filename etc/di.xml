@@ -1,0 +1,138 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Denis Colli Spalenza <denis@imaginationmedia.com>
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Magento\InventoryApi\Api\Data\SourceExtension"
+                type="ImaginationMedia\CurbsidePickup\Rewrite\Magento\InventoryApi\Api\Data\SourceExtension"/>
+    <preference for="Magento\Quote\Api\Data\AddressExtension"
+                type="ImaginationMedia\CurbsidePickup\Rewrite\Magento\Quote\Api\Data\AddressExtension"/>
+
+    <type name="Magento\InventoryInStorePickup\Model\Source\InitPickupLocationExtensionAttributes">
+        <plugin disabled="false"
+                name="ImaginationMedia_CurbsidePickup_Plugin_Magento_InventoryInStorePickup_Model_Source_InitPickupLocationExtensionAttributes"
+                sortOrder="10"
+                type="ImaginationMedia\CurbsidePickup\Plugin\Magento\InventoryInStorePickup\Model\Source\InitPickupLocationExtensionAttributes"/>
+    </type>
+
+    <type name="Magento\InventoryApi\Api\SourceRepositoryInterface">
+        <plugin disabled="false"
+                name="save_in_store_curbside_pickup_links"
+                sortOrder="100"
+                type="ImaginationMedia\CurbsidePickup\Plugin\Magento\InventoryApi\SourceRepository\SaveInStoreCurbsidePickupPlugin"/>
+    </type>
+
+    <type name="Magento\InventoryInStorePickupApi\Model\Mapper">
+        <arguments>
+            <argument name="map" xsi:type="array">
+                <item name="extension_attributes.is_curbside_pickup_location_active" xsi:type="string">extension_attributes.is_curbside_pickup_location_active</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Curbside Order Grid -->
+    <virtualType
+            name="CurbsideGridFilterPool"
+            type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="regular" xsi:type="object">
+                    Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter
+                </item>
+                <item name="fulltext" xsi:type="object">
+                    Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="curbside_order_listing_data_source" xsi:type="string">ImaginationMedia\CurbsidePickup\Model\ResourceModel\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Model\ResourceModel\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">sales_order_grid</argument>
+            <argument name="resourceModel" xsi:type="string">\Magento\Sales\Model\ResourceModel\Order</argument>
+        </arguments>
+    </type>
+
+    <!-- Curbside Order Service -->
+    <preference for="ImaginationMedia\CurbsidePickup\Action\CurbsideOrderInterface"
+                type="ImaginationMedia\CurbsidePickup\Model\Action\CurbsideOrder"/>
+
+    <!-- Curbside Email Notification Service -->
+    <preference for="\ImaginationMedia\CurbsidePickup\Action\EmailNotificationInterface"
+                type="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification"/>
+
+    <!-- Email Notifications Logger -->
+    <virtualType name="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualDebug" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/curbside_email.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualDebug</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification">
+        <arguments>
+            <argument name="logger" xsi:type="object">ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualLogger</argument>
+        </arguments>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Cron\SendDeliveryReminder">
+        <arguments>
+            <argument name="logger" xsi:type="object">ImaginationMedia\CurbsidePickup\Model\Action\EmailNotification\VirtualLogger</argument>
+        </arguments>
+    </type>
+
+    <!-- Pass Curbside data to Quote -->
+    <type name="Magento\Quote\Api\CartRepositoryInterface">
+        <plugin name="checkoutPassCurbsideInfoToQuote"
+                type="\ImaginationMedia\CurbsidePickup\Plugin\Magento\QuoteApi\CartRepositoryInterfacePlugin"
+                sortOrder="10"
+        />
+    </type>
+
+    <!-- Curbside Orders - Auth Protect middleware-->
+    <type name="ImaginationMedia\CurbsidePickup\Controller\Order\View">
+        <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Controller\Order\History">
+        <plugin name="authentication" type="Magento\Sales\Controller\Order\Plugin\Authentication"/>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Controller\Order\Pickup">
+        <plugin name="authentication_curbside_pickup_page" type="ImaginationMedia\CurbsidePickup\Plugin\AuthorizeCurbsidePickupAccess"/>
+    </type>
+    <type name="ImaginationMedia\CurbsidePickup\Controller\Order\PickupPost">
+        <plugin name="authentication_curbside_pickup_page" type="ImaginationMedia\CurbsidePickup\Plugin\AuthorizeCurbsidePickupAccess"/>
+    </type>
+
+    <!-- Make Frontend URL access from Admin URL-->
+    <type name="ImaginationMedia\CurbsidePickup\Model\Email\CurbsideOrderSender">
+        <arguments>
+            <argument name="url" xsi:type="object">Magento\Framework\Url</argument>
+        </arguments>
+    </type>
+
+    <!-- Curbside Pickup Access Token Management -->
+    <preference for="ImaginationMedia\CurbsidePickup\Model\CurbsidePickupTokenManagementInterface"
+                type="ImaginationMedia\CurbsidePickup\Model\CurbsidePickupTokenManagement"/>
+</config>

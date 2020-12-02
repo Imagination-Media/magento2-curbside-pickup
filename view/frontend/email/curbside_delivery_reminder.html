@@ -1,0 +1,55 @@
+<!--
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+
+<!--@subject {{trans "Delivery reminder for %store_name order" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var order_data.pickup_url":"Curbside Pick Up URL",
+"var order_data.customer_name":"Customer Name",
+"var order.increment_id":"Order Id",
+"var order_data.frontend_status_label":"Order Status",
+"var order_data.curbside_delivery_time":"Order Curbside Delivery Time",
+"var order_data.pickup_location_name":"Order Pick Up Location",
+"var store.frontend_name":"Store Frontend Name",
+"var store_email":"Store Email",
+"var store_phone":"Store Phone",
+"var store_hours":"Store Hours"
+} @-->
+{{template config_path="design/email/header_template"}}
+
+<table>
+    <tr class="email-intro">
+        <td>
+            <p class="greeting">{{trans "%name," name=$order_data.customer_name}}</p>
+            <p>
+                {{trans
+                    "Your order #%increment_id is ready for be delivered in 1 hour (<strong>%curbside_delivery_time</strong>)"
+                    increment_id=$order.increment_id
+                    curbside_delivery_time=$order_data.curbside_delivery_time
+                |raw}}
+            </p>
+            <p>{{trans 'Be free to inform us <a href="%order_url">here</a>' order_url=$order_data.pickup_url |raw}} {{trans 'once when on location.'}}</p>
+            <p>
+                {{depend $order_data.pickup_location_name}}
+                {{trans 'Pick up Store Location: <span class="no-link">%pickup_location_name</span>.' pickup_location_name=$order_data.pickup_location_name |raw}}
+                {{/depend}}
+                {{trans 'If you have questions about your order, you can email us at <a href="mailto:%store_email">%store_email</a>' store_email=$store_email |raw}}{{depend store_phone}} {{trans 'or call us at <a href="tel:%store_phone">%store_phone</a>' store_phone=$store_phone |raw}}{{/depend}}.
+                {{depend store_hours}}
+                    {{trans 'Our hours are <span class="no-link">%store_hours</span>.' store_hours=$store_hours |raw}}
+                {{/depend}}
+            </p>
+        </td>
+    </tr>
+</table>
+
+{{template config_path="design/email/footer_template"}}
