@@ -37,7 +37,7 @@
                     order_status=$order_data.frontend_status_label
                 |raw}}
             </p>
-            <p>{{trans 'You can track your order <a href="%order_url">here</a>.' order_url=$order_data.pickup_url |raw}}</p>
+            <p>{{trans 'Please click <a href="%order_url">this link</a>' order_url=$order_data.pickup_url |raw}} {{trans ' when you arrive to let us know you are here.'}}</p>
             <p>
                 {{trans 'If you have questions about your order, you can email us at <a href="mailto:%store_email">%store_email</a>' store_email=$store_email |raw}}{{depend store_phone}} {{trans 'or call us at <a href="tel:%store_phone">%store_phone</a>' store_phone=$store_phone |raw}}{{/depend}}.
                 {{depend store_hours}}

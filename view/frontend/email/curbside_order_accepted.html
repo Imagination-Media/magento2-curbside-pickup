@@ -34,7 +34,7 @@
             <p class="greeting">{{trans "%name," name=$order_data.customer_name}}</p>
             <p>
                 {{trans
-                    "Your order #%increment_id has been invoiced and updated with a status of <strong>%order_status</strong> and can proceed further."
+                    "Your order #%increment_id has been invoiced and updated with a status of <strong>%order_status</strong>."
                     increment_id=$order.increment_id
                     order_status=$order_data.frontend_status_label
                 |raw}}
@@ -43,7 +43,7 @@
             <p>{{trans 'You can track your order <a href="%order_url">here</a>.' order_url=$order_data.order_url |raw}}</p>
             {{/depend}}
             <p>
-                {{trans 'Be free to inform us about pick up <a href="%order_url">here</a>.' order_url=$order_data.pickup_url |raw}}
+                {{trans 'Please click <a href="%order_url">here</a>.' order_url=$order_data.pickup_url |raw}} {{trans ' when you arrive to let us know you are here.'}}
                 {{trans 'If you have questions about your order, you can email us at <a href="mailto:%store_email">%store_email</a>' store_email=$store_email |raw}}{{depend store_phone}} {{trans 'or call us at <a href="tel:%store_phone">%store_phone</a>' store_phone=$store_phone |raw}}{{/depend}}.
                 {{depend store_hours}}
                     {{trans 'Our hours are <span class="no-link">%store_hours</span>.' store_hours=$store_hours |raw}}

@@ -33,12 +33,12 @@
             <p class="greeting">{{trans "%name," name=$order_data.customer_name}}</p>
             <p>
                 {{trans
-                    "Your order #%increment_id is ready for be delivered in 1 hour (<strong>%curbside_delivery_time</strong>)"
+                    ""Reminder that your order #%increment_id is scheduled for pickup in 1 hour (<strong>%curbside_delivery_time</strong>)"
                     increment_id=$order.increment_id
                     curbside_delivery_time=$order_data.curbside_delivery_time
                 |raw}}
             </p>
-            <p>{{trans 'Be free to inform us <a href="%order_url">here</a>' order_url=$order_data.pickup_url |raw}} {{trans 'once when on location.'}}</p>
+            <p>{{trans 'Please click <a href="%order_url">this link</a>' order_url=$order_data.pickup_url |raw}} {{trans ' when you arrive to let us know you are here.'}}</p>
             <p>
                 {{depend $order_data.pickup_location_name}}
                 {{trans 'Pick up Store Location: <span class="no-link">%pickup_location_name</span>.' pickup_location_name=$order_data.pickup_location_name |raw}}
