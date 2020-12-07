@@ -16,7 +16,13 @@ declare(strict_types=1);
 namespace ImaginationMedia\CurbsidePickup\Model\ResourceModel\Grid;
 
 use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Data\Collection\Db\FetchStrategyInterface as FetchStrategy;
+use Magento\Framework\Data\Collection\EntityFactoryInterface as EntityFactory;
+use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult;
+use Psr\Log\LoggerInterface as Logger;
 
 class Collection extends SearchResult
 {
@@ -25,14 +31,60 @@ class Collection extends SearchResult
     private const CURBSIDE_DELIVERY_TIME_FIELD = 'curbside_delivery_time';
 
     /**
+     * @var RequestInterface
+     */
+    private RequestInterface $request;
+
+    /**
+     * Collection constructor.
+     * @param RequestInterface $request
+     * @param EntityFactory $entityFactory
+     * @param Logger $logger
+     * @param FetchStrategy $fetchStrategy
+     * @param EventManager $eventManager
+     * @param $mainTable
+     * @param null $resourceModel
+     * @param null $identifierName
+     * @param null $connectionName
+     * @throws LocalizedException
+     */
+    public function __construct(
+        RequestInterface $request,
+        EntityFactory $entityFactory,
+        Logger $logger,
+        FetchStrategy $fetchStrategy,
+        EventManager $eventManager,
+        $mainTable,
+        $resourceModel = null,
+        $identifierName = null,
+        $connectionName = null
+    ) {
+        $this->request = $request;
+
+        parent::__construct(
+            $entityFactory,
+            $logger,
+            $fetchStrategy,
+            $eventManager,
+            $mainTable,
+            $resourceModel,
+            $identifierName,
+            $connectionName
+        );
+    }
+
+    /**
      * @inheritdoc
      */
     protected function _initSelect()
     {
         parent::_initSelect();
 
+        $data = $this->request->getParams();
         $this->addFieldToFilter(self::CURBSIDE_FIELD, OrderStatus::STATUS_ACTIVE);
-        $this->setOrder(self::CURBSIDE_DELIVERY_TIME_FIELD, 'ASC');
+        if (empty($data['sorting'])) {
+           $this->setOrder(self::CURBSIDE_DELIVERY_TIME_FIELD, 'ASC');
+        }
 
         return $this;
     }

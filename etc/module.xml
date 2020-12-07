@@ -17,6 +17,7 @@
     <module name="ImaginationMedia_CurbsidePickup">
         <sequence>
             <module name="Magento_InventoryInStorePickup"/>
+            <module name="Magento_InventoryInStorePickupShippingAdminUi"/>
             <module name="Magento_Checkout"/>
             <module name="Magento_Backend"/>
             <module name="Magento_Ui"/>

@@ -79,7 +79,7 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                        value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarPlate()) ?>"
                 />
                 <?php else: ?>
-                <p><?= $escaper->escapeHtml($curbsideData->getCarPlate()) ?></p>
+                <p><?= $escaper->escapeHtml($curbsideData->getCarPlate() ?? '-') ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -95,7 +95,7 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                        name="car_color"
                        data-input="car-color"
                        autocomplete="off"
-                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarColor()) ?>"
+                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarColor() ?? '-') ?>"
                 />
                 <?php else: ?>
                 <p><?= $escaper->escapeHtml($curbsideData->getCarColor()) ?></p>
@@ -109,7 +109,7 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                 <span><?= $escaper->escapeHtml(__('Pickup Location')) ?></span>
             </label>
             <div class="control">
-                <p><?= $escaper->escapeHtml($curbsideData->getPickupLocationName()) ?></p>
+                <p><?= $escaper->escapeHtml($curbsideData->getPickupLocationName() ?? '-') ?></p>
             </div>
         </div>
         <?php endif ?>
@@ -125,10 +125,10 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                            name="parking_spot"
                            data-input="parking-spot"
                            autocomplete="off"
-                           value="<?= $escaper->escapeHtmlAttr($curbsideData->getParkingSpot()) ?>"
+                           value="<?= $escaper->escapeHtmlAttr($curbsideData->getParkingSpot() ?? '-') ?>"
                     />
                 <?php else: ?>
-                    <p><?= $escaper->escapeHtml($curbsideData->getParkingSpot()) ?></p>
+                    <p><?= $escaper->escapeHtml($curbsideData->getParkingSpot() ?? '-') ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -158,7 +158,7 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                     <div class="control">
                         <input type="hidden"
                                id="min_date"
-                               value="<?= strtotime($pickupViewModel->getSoonestDeliveryTime()) ?>"
+                               value="<?= $pickupViewModel->getPickupScheduledTime() ?>"
                         />
                     </div>
                 </div>
@@ -174,9 +174,11 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                     />
                 </div>
             </div>
+
         <?php endif; ?>
     </fieldset>
 
+    <?php if ($curbsideData->getNote()): ?>
     <fieldset class="fieldset additional_info">
         <div class="field note" data-container="note">
             <label class="label" for="note">
@@ -185,11 +187,12 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
             <div class="control">
                 <?php if ($editMode): ?>
                     <textarea type="text"
-                          maxlength="300"
+                          maxlength="500"
                           rows="4"
-                          cols="10"
+                          autofocus
                           class="input-text"
-                          name="note" autocomplete="off">
+                          name="note"
+                    >
                             <?= $curbsideData->getNote() ?>
                     </textarea>
                 <?php else: ?>
@@ -198,6 +201,7 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
             </div>
         </div>
     </fieldset>
+    <?php endif; ?>
 
     <?php if ($pickupViewModel->isOrderScheduledForPickup() && !$pickupViewModel->isOrderPickedUp()): ?>
         <?php if ($isPickupScheduledForStore): ?>
@@ -206,9 +210,9 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
         <p class="pickup-availability"><?= $escaper->escapeHtml(__('Your Order will be available for pick up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
         <?php endif; ?>
     <?php elseif ($pickupViewModel->isOrderPickedUp()): ?>
-        <p class="picked-up"><?= $escaper->escapeHtml(__('Order completed/delivered up at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
+        <p class="picked-up"><?= $escaper->escapeHtml(__('Order delivered at: ')) . $pickupViewModel->getPickupScheduledTime() ?></p>
     <?php endif; ?>
-    <?php if (!$pickupViewModel->isCustomerReadyToPickUp()): ?>
+    <?php if (!$pickupViewModel->isCustomerReadyToPickUp() && !$pickupViewModel->isOrderPickedUp()): ?>
         <div class="actions-toolbar">
             <div class="primary">
                 <button type="submit" class="action pickup-action primary" title="<?= $escaper->escapeHtmlAttr(__($actionButtonTitle)) ?>">
@@ -239,7 +243,8 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                 'mage/mage',
                 'mage/calendar'
             ], function ($) {
-                var minDate = new Date($('#min_date').val());
+                var scheduleDate = $('#min_date').val();
+                var minDate = scheduleDate ? new Date(scheduleDate) : Date.now();
 
                 //<![CDATA[
                 $('#scheduled_pickup').calendar({

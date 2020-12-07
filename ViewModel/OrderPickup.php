@@ -122,8 +122,11 @@ class OrderPickup implements ArgumentInterface
         if (!$this->getOrder()->getCurbsideDeliveryTime()) {
             return null;
         }
-        $deliveryTime = new \DateTime($this->getOrder()->getCurbsideDeliveryTime());
-        return $deliveryTime->format('m/d/y h:i A');
+
+        return $this->helper->displayInCurrentTimezone(
+            $this->getOrder()->getCurbsideDeliveryTime(),
+            'm/d/y h:i A'
+        );
     }
 
     /**
@@ -132,15 +135,6 @@ class OrderPickup implements ArgumentInterface
     public function isCustomerReadyToPickUp(): bool
     {
         return $this->getOrder()->getStatus() === OrderStatus::STATUS_CUSTOMER_READY;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOrderReadyToPickUp(): bool
-    {
-        return $this->getOrder()->getStatus() === OrderStatus::STATUS_READY_TO_PICK_UP
-            && strtotime('now') > strtotime($this->getOrder()->getCurbsideDeliveryTime());
     }
 
     /**
@@ -161,19 +155,6 @@ class OrderPickup implements ArgumentInterface
     {
         return $this->getOrder()->getStatus() === Order::STATE_COMPLETE
             && $this->getOrder()->getCurbside();
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSoonestDeliveryTime(): ?string
-    {
-        $order = $this->getOrder();
-        if ($order && $order->getCurbsideDeliveryTime() !== null) {
-            $deliveryDate = (new \DateTime($this->getOrder()->getCurbsideDeliveryTime()));
-            return $deliveryDate->format('m/d/y h:i A');
-        }
-        return null;
     }
 
     /**

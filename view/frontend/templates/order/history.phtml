@@ -13,6 +13,7 @@
 
 /** @var \Magento\Sales\Block\Order\History $block */
 
+use ImaginationMedia\CurbsidePickup\Helper\Data;
 use ImaginationMedia\CurbsidePickup\ViewModel\OrderHistory;
 use Magento\Framework\Escaper;
 
@@ -24,6 +25,7 @@ $_orders = $block->getOrders();
 $historyViewModel = $block->getData('historyViewModel');
 
 $_curbsideOrders = $historyViewModel->filterCurbsideOrders($_orders);
+$helper = $this->helper(Data::class);
 ?>
 <?= $block->getChildHtml('info') ?>
 <?php if ($_curbsideOrders && count($_curbsideOrders)) : ?>
@@ -46,8 +48,10 @@ $_curbsideOrders = $historyViewModel->filterCurbsideOrders($_orders);
                 <?php foreach ($_orders as $_order) : ?>
                 <?php    /** @var Magento\Sales\Model\Order $_order */
                         $curbsideData = $historyViewModel->getCurbsideData($_order);
-                        $curbsideDeliveryTime = (new DateTime($curbsideData->getCurbsideDeliveryTime()))->format('m/d/y h:i A');
-                    ?>
+                        $curbsideDeliveryTime = $_order->getCurbsideDeliveryTime()
+                            ? $helper->displayInCurrentTimezone($_order->getCurbsideDeliveryTime(), 'm/d/y h:i A')
+                        : null;
+                ?>
                     <tr>
                         <td data-th="<?= $escaper->escapeHtml(__('Order #')) ?>" class="col id"><?= $escaper->escapeHtml($_order->getRealOrderId()) ?></td>
                         <td data-th="<?= $escaper->escapeHtml(__('Delivery Time')) ?>" class="col date"><?= /* @noEscape */ $curbsideDeliveryTime ?></td>

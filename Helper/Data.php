@@ -17,9 +17,9 @@ namespace ImaginationMedia\CurbsidePickup\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use ImaginationMedia\CurbsidePickup\ViewModel\User\CurrentTimezone;
 
 class Data extends AbstractHelper
 {
@@ -41,17 +41,27 @@ class Data extends AbstractHelper
     /**
      * @var StoreManagerInterface
      */
-    private $storeManager;
+    private StoreManagerInterface $storeManager;
+
+    /**
+     * @var CurrentTimezone
+     */
+    private CurrentTimezone $timezoneInterface;
 
     /**
      * Data constructor.
+     * @param CurrentTimezone $timezoneInterface
      * @param StoreManagerInterface $storeManager
      * @param Context $context
      */
-    public function __construct(StoreManagerInterface $storeManager, Context $context)
-    {
+    public function __construct(
+        CurrentTimezone $timezoneInterface,
+        StoreManagerInterface $storeManager,
+        Context $context
+    ) {
         parent::__construct($context);
         $this->storeManager = $storeManager;
+        $this->timezoneInterface = $timezoneInterface;
     }
 
     /**
@@ -158,12 +168,42 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Return store
-     *
-     * @return StoreInterface
+     * @param string $dateTime
+     * @param string|null $format
+     * @return string
+     * @throws \Exception
      */
-    private function getStore(): StoreInterface
+    public function displayInCurrentTimezone(string $dateTime, ?string $format = null): string
     {
-        return $this->storeManager->getStore();
+        $dateTimeFormatted = new \DateTime($dateTime);
+        $timeZoneOffset = $this->timezoneInterface->getTimezoneOffset();
+        if ($timeZoneOffset !== null) {
+            [$diffInHours, $offsetType] = $this->calculateDifferenceInHours($timeZoneOffset);
+            if ($diffInHours === null) {
+                return $dateTimeFormatted->format($format ?? 'Y-m-d H:i');
+            }
+            if ($offsetType === '-') {
+                $dateTimeFormatted = $dateTimeFormatted->sub($diffInHours);
+            } else {
+                $dateTimeFormatted = $dateTimeFormatted->add($diffInHours);
+            }
+        }
+        return $dateTimeFormatted->format($format ?? 'Y-m-d H:i');
+    }
+
+    /**
+     * @param string $timeZoneOffset
+     * @return array
+     * @throws \Exception
+     */
+    private function calculateDifferenceInHours(string $timeZoneOffset): array
+    {
+        $diffInMinutes = null;
+        $offsetType = substr($timeZoneOffset, 0, 1);
+        if (in_array($offsetType, ['-', '+'])) {
+            $timeZoneOffset = (int)(ltrim($timeZoneOffset, $offsetType));
+            $diffInMinutes = new \DateInterval('PT' . $timeZoneOffset . 'M');
+        }
+        return [$diffInMinutes, $offsetType];
     }
 }

@@ -14,6 +14,7 @@
 
 declare(strict_types=1);
 
+use ImaginationMedia\CurbsidePickup\Helper\Data;
 use ImaginationMedia\CurbsidePickup\Setup\Patch\Data\OrderStatus;
 use ImaginationMedia\CurbsidePickup\ViewModel\Sales\Order\Curbside;
 use Magento\Framework\View\Element\Template;
@@ -27,6 +28,7 @@ use Magento\Sales\Model\Order;
 
 $viewModel = $block->getViewModel();
 $orders = $viewModel->getCurbsideOrder();
+$helper = $this->helper(Data::class);
 ?>
 
 <?php if ($orders->count() > 0): ?>
@@ -54,7 +56,14 @@ $orders = $viewModel->getCurbsideOrder();
                         <?= $block->formatDate($order->getCreatedAt()) ?>
                     </td>
                     <td data-th="Delivery Time" class="col delivery_time">
-                        <?= $block->formatDate($order->getData(OrderStatus::FIELD_CURBSIDE_DELIVERY_TIME)) ?>
+                        <?=
+                        $order->getData(OrderStatus::FIELD_CURBSIDE_DELIVERY_TIME)
+                            ? $helper->displayInCurrentTimezone(
+                                    $order->getData(OrderStatus::FIELD_CURBSIDE_DELIVERY_TIME),
+                                    'm/d/y h:i A'
+                                )
+                            : '-'
+                        ?>
                     </td>
                     <td data-th=Store" class="col store">
                         <?php //TODO ?>

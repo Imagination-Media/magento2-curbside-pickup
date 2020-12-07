@@ -1,0 +1,53 @@
+<?php
+/**
+ * Curbside pickup for Magento 2
+ *
+ * This module extends the base pick up in-store Magento 2 functionality
+ * adding an option for a curbside pick up
+ *
+ * @package ImaginationMedia\CurbsidePickup
+ * @author Antonio Lolić <antonio@imaginationmedia.com>
+ * @copyright Copyright (c) 2020 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+use ImaginationMedia\CurbsidePickup\ViewModel\User\CurrentTimezone;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+
+/** @var SecureHtmlRenderer $secureRenderer */
+
+/** @var CurrentTimezone $viewModel */
+$viewModel = $block->getData('timeZoneViewModel');
+$timezoneOffset = null;
+if ($viewModel->getTimezoneOffset() === null) :
+?>
+<?php $scriptString= <<<script
+        require([
+            'jquery',
+            'jquery/jquery.cookie'
+        ], function ($) {
+                var timezoneOffset = new Date().getTimezoneOffset();
+                $.cookie('timezoneOffset', timezoneOffset);
+            });
+        script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+
+<script>
+    var timezoneOffset = new Date().getTimezoneOffset();
+</script>
+
+<?php
+    $timezoneOffset = "<script>document.writeln(timezoneOffset);</script>";
+    if ($timezoneOffset) {
+        $viewModel->saveTimezoneOffsetInSession($timezoneOffset);
+    }
+endif;
+?>
+
+
+
+
