@@ -37,7 +37,7 @@ class CurrentTimezone implements ArgumentInterface
     /**
      * @return string|null
      */
-    public function getTimezone(): ?string
+    public function getTimezoneOffset(): ?string
     {
         return $this->timeZoneSession->getTimeZoneOffset();
     }

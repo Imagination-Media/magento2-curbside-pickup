@@ -117,6 +117,7 @@ class Deliver  extends Action implements HttpPostActionInterface
             $this->logger->error($e->getTraceAsString());
             $response = [
                 'error' => 'true',
+                'status' => $order->getStatus(),
                 'message' => __('Order has been completed successfully.')
             ];
         }

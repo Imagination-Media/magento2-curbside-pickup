@@ -35,6 +35,7 @@ use Psr\Log\LoggerInterface;
 use ImaginationMedia\CurbsidePickup\Model\CurbsideOrder as CurbsideOrderModel;
 use Magento\Framework\Serialize\SerializerInterface;
 use ImaginationMedia\CurbsidePickup\Model\ResourceModel\CurbsideOrder as CurbsideOrderResource;
+use ImaginationMedia\CurbsidePickup\Helper\Data;
 
 class CurbsideOrder implements CurbsideOrderInterface
 {
@@ -77,10 +78,16 @@ class CurbsideOrder implements CurbsideOrderInterface
      * @var SearchCriteriaBuilder
      */
     private SearchCriteriaBuilder $searchCriteriaBuilder;
+
     /**
      * @var CurbsideOrderResource
      */
     private CurbsideOrderResource $curbsideOrderResource;
+
+    /**
+     * @var Data
+     */
+    private Data $helper;
 
     /**
      * @param CurbsideOrderResource $curbsideOrderResource
@@ -91,6 +98,7 @@ class CurbsideOrder implements CurbsideOrderInterface
      * @param InvoiceSender $invoiceSender
      * @param ShipmentNotifier $shipmentNotifier
      * @param SerializerInterface $json
+     * @param Data $helper
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -102,6 +110,7 @@ class CurbsideOrder implements CurbsideOrderInterface
         InvoiceSender $invoiceSender,
         ShipmentNotifier $shipmentNotifier,
         SerializerInterface $json,
+        Data $helper,
         LoggerInterface $logger
     ) {
         $this->orderRepository = $orderRepository;
@@ -113,6 +122,7 @@ class CurbsideOrder implements CurbsideOrderInterface
         $this->json = $json;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->curbsideOrderResource = $curbsideOrderResource;
+        $this->helper = $helper;
     }
 
     /**
@@ -208,8 +218,12 @@ class CurbsideOrder implements CurbsideOrderInterface
     {
         try {
             if (isset($data['curbside_delivery_time'])) {
-                $deliveryTime = new \DateTime($data['curbside_delivery_time']);
-                $order->setCurbsideDeliveryTime($deliveryTime->format('Y-m-d H:i:s'));
+                $deliveryTime = $this->helper->displayInCurrentTimezone(
+                    $data['curbside_delivery_time'],
+                    'Y-m-d H:i:s',
+                    true
+                );
+                $order->setCurbsideDeliveryTime($deliveryTime);
             }
 
             $existingData = $order->getCurbsideData() ? $this->json->unserialize($order->getCurbsideData()) : [];

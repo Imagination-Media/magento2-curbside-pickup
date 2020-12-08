@@ -95,10 +95,10 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                        name="car_color"
                        data-input="car-color"
                        autocomplete="off"
-                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarColor() ?? '-') ?>"
+                       value="<?= $escaper->escapeHtmlAttr($curbsideData->getCarColor()) ?>"
                 />
                 <?php else: ?>
-                <p><?= $escaper->escapeHtml($curbsideData->getCarColor()) ?></p>
+                <p><?= $escaper->escapeHtml($curbsideData->getCarColor() ?? '-') ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -125,7 +125,7 @@ $actionButtonTitle = $pickupViewModel->getPickupButtonTitle();
                            name="parking_spot"
                            data-input="parking-spot"
                            autocomplete="off"
-                           value="<?= $escaper->escapeHtmlAttr($curbsideData->getParkingSpot() ?? '-') ?>"
+                           value="<?= $escaper->escapeHtmlAttr($curbsideData->getParkingSpot()) ?>"
                     />
                 <?php else: ?>
                     <p><?= $escaper->escapeHtml($curbsideData->getParkingSpot() ?? '-') ?></p>

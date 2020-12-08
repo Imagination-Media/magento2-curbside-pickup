@@ -123,8 +123,13 @@ class OrderPickup implements ArgumentInterface
             return null;
         }
 
+        $deliveryTime = $this->getOrder()->getCurbsideDeliveryTime();
+        if (new \DateTime() > new \DateTime($this->getOrder()->getCurbsideDeliveryTime())) {
+            $deliveryTime = 'now';
+        }
+
         return $this->helper->displayInCurrentTimezone(
-            $this->getOrder()->getCurbsideDeliveryTime(),
+            $deliveryTime,
             'm/d/y h:i A'
         );
     }
@@ -145,7 +150,7 @@ class OrderPickup implements ArgumentInterface
        if ($this->isScheduledPickupActive() && !$this->isOrderScheduledForPickup()) {
             return 'Schedule Pick Up';
         }
-        return 'I\'m on Location ready';
+        return 'I\'ve arrived to pick up';
     }
 
     /**

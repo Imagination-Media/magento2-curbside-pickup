@@ -170,10 +170,16 @@ class Data extends AbstractHelper
     /**
      * @param string $dateTime
      * @param string|null $format
+     * @param null|mixed $utc
      * @return string
      * @throws \Exception
      */
-    public function displayInCurrentTimezone(string $dateTime, ?string $format = null): string
+    public function displayInCurrentTimezone(
+        string $dateTime,
+        ?string
+        $format = null,
+        $utc = null
+    ): string
     {
         $dateTimeFormatted = new \DateTime($dateTime);
         $timeZoneOffset = $this->timezoneInterface->getTimezoneOffset();
@@ -183,9 +189,13 @@ class Data extends AbstractHelper
                 return $dateTimeFormatted->format($format ?? 'Y-m-d H:i');
             }
             if ($offsetType === '-') {
-                $dateTimeFormatted = $dateTimeFormatted->sub($diffInHours);
+                $dateTimeFormatted = $utc ?
+                    $dateTimeFormatted->sub($diffInHours)
+                    : $dateTimeFormatted->add($diffInHours);
             } else {
-                $dateTimeFormatted = $dateTimeFormatted->add($diffInHours);
+                $dateTimeFormatted = $utc ?
+                    $dateTimeFormatted->add($diffInHours)
+                    : $dateTimeFormatted->sub($diffInHours);
             }
         }
         return $dateTimeFormatted->format($format ?? 'Y-m-d H:i');
